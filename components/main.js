@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export function Container({ children }) {
     return (
         <>
@@ -28,6 +30,27 @@ export function List({ children }) {
             <div className="list-group">
                 {children}
             </div>
+        </>
+    )
+}
+
+export function Navbar() {
+    return (
+        <>
+            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+                <div className="mx-auto d-sm-flex d-block flex-sm-nowrap">
+                    <div className="collapse navbar-collapse text-center" id="navbarSupportedContent">
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <Link className="nav-link" href="/">Home</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" href="/about">About</Link>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
         </>
     )
 }
