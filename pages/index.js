@@ -1,13 +1,13 @@
-import Head from 'next/head'
-import { Container } from '@/components/main'
-// import styles from '@/styles/Home.module.css'
+import { Container, Card } from '@/components/main'
 
 
 export default function Home() {
   return (
     <>
       <Container>
-        <h1>Hi</h1>
+        <Card>
+          <h1>TEST</h1>
+        </Card>
       </Container>
     </>
   )
