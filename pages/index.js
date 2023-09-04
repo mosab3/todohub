@@ -1,4 +1,4 @@
-import { Container, Card } from '@/components/main'
+import { Container, Card, List } from '@/components/main'
 
 
 export default function Home() {
@@ -6,7 +6,11 @@ export default function Home() {
     <>
       <Container>
         <Card>
-          <h1>TEST</h1>
+          <List>
+            <li className='list-group-item'>One</li>
+            <li className='list-group-item'>Two</li>
+            <li className='list-group-item'>Three</li>
+          </List>
         </Card>
       </Container>
     </>
