@@ -21,3 +21,13 @@ export function Card({ children }) {
         </>
     )
 }
+
+export function List({ children }) {
+    return (
+        <>
+            <div className="list-group">
+                {children}
+            </div>
+        </>
+    )
+}
