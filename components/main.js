@@ -3,9 +3,11 @@ import Link from "next/link"
 export function Container({ children }) {
     return (
         <>
-            <div className="pt-5">
-                <div className="container">
-                    {children}
+            <div className="d-flex justify-content-center">
+                <div className="pt-5" style={{width: '35rem'}}>
+                    <div className="container">
+                        {children}
+                    </div>
                 </div>
             </div>
         </>
