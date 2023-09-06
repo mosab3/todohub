@@ -14,16 +14,16 @@ export default function Home() {
       <Container>
         <Card>
           <List>
-          <div className='mb-3'>
-            <input className='form-control' placeholder='Input Text...' onKeyDown={handelEnter}/>
-          </div>
-          <div className='mb-3'>
-              <List>
-                <li className='list-group-item'>One</li>
-                <li className='list-group-item'>Two</li>
-                <li className='list-group-item'>Three</li>
-              </List>
-          </div>
+            <div className='mb-3'>
+              <input className='form-control' placeholder='Input Text...' onKeyDown={handelEnter}/>
+            </div>
+            <div className='mb-3'>
+                <List>
+                  <li className='list-group-item'> <input type='checkbox' className='form-check-input' /> One</li>
+                  <li className='list-group-item'> <input type='checkbox' className='form-check-input' /> Two</li>
+                  <li className='list-group-item'> <input type='checkbox' className='form-check-input' /> Three</li>
+                </List>
+            </div>
           </List>
         </Card>
       </Container>
