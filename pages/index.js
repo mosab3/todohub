@@ -1,11 +1,17 @@
 import { Container, Card, List } from '@/components/main'
+import { useState } from 'react'
 
 
 export default function Home() {
 
+  const [todo, setTodo] = useState([])
+
   const handelEnter = (event) => {
+    let value = event.target.value
     if (event.key == 'Enter') {
-      console.log('Entered.')
+      if (value != "" && todo.includes(value) != true) {
+        setTodo(oldList => [...oldList, value])
+      }
     }
   }
 
@@ -19,9 +25,9 @@ export default function Home() {
             </div>
             <div className='mb-3'>
                 <List>
-                  <li className='list-group-item'> <input type='checkbox' className='form-check-input' /> One</li>
-                  <li className='list-group-item'> <input type='checkbox' className='form-check-input' /> Two</li>
-                  <li className='list-group-item'> <input type='checkbox' className='form-check-input' /> Three</li>
+                  {todo.slice(0).reverse().map((value, index) =>
+                    <li className='list-group-item' key={index}><input type='checkbox' className='form-check-input' key={index} /> {value}</li>
+                  )}
                 </List>
             </div>
           </List>
