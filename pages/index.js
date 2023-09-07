@@ -11,7 +11,7 @@ export default function Home() {
     let value = event.target.value
     if (event.key == 'Enter') {
       if (value != "" && todo.includes(value) != true && complete.includes(value) != true) {
-        setTodo(oldTodoList => [...oldTodoList, value])
+        setTodo(oldTodoList => [...oldTodoList, value.trim()])
         event.target.value = ""
       }
     }
@@ -22,15 +22,13 @@ export default function Home() {
     let value = event.target.value
     let todoList = todo
     let completeList = complete
-    if (complete.includes(value) != true) {
-      if (checked) {
-        setTodo(todoList.filter(e => e !== value))
-        setComplete(oldCompleteList => [...oldCompleteList, value])
-      }
+    if (complete.includes(value) == false && checked) {
+      setTodo(todoList.filter(e => e !== value))
+      setComplete(oldCompleteList => [...oldCompleteList, value])
     }
-    if (checked == false) {
-      setComplete(completeList.filter(e => e !== value))
-      setTodo(oldTodoList => [...oldTodoList, value])
+    else if (todo.includes(value) == false && checked == false) {
+        setComplete(completeList.filter(e => e !== value))
+        setTodo(oldTodoList => [...oldTodoList, value])
     }
   }
 
@@ -45,12 +43,14 @@ export default function Home() {
             <div className='mb-3'>
                 <List>
                   {todo.slice(0).reverse().map((value, index) =>
-                    <li className='list-group-item' key={index}><input
-                    type='checkbox'
-                    className='form-check-input'
-                    key={index}
-                    value={value}
-                    onChange={handelCheck}
+                    <li className='list-group-item' key={index}>
+                    <input
+                      type='checkbox'
+                      className='form-check-input'
+                      key={index}
+                      value={value}
+                      onChange={handelCheck}
+                      defaultChecked={false}
                     /> {value}</li>
                   )}
                 </List>
@@ -58,13 +58,14 @@ export default function Home() {
             <div className='mb-3'>
                 <List>
                   {complete.slice(0).reverse().map((value, index) =>
-                    <li className='list-group-item list-group-item-secondary' key={index}><input
-                    type='checkbox'
-                    className='form-check-input'
-                    key={index}
-                    value={value}
-                    onChange={handelCheck}
-                    defaultChecked={true}
+                    <li className='list-group-item list-group-item-secondary' key={index}>
+                    <input
+                      type='checkbox'
+                      className='form-check-input'
+                      key={index}
+                      value={value}
+                      onChange={handelCheck}
+                      defaultChecked={true}
                     /> {value}</li>
                   )}
                 </List>
