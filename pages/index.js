@@ -12,6 +12,7 @@ export default function Home() {
     if (event.key == 'Enter') {
       if (value != "" && todo.includes(value) != true && complete.includes(value) != true) {
         setTodo(oldTodoList => [...oldTodoList, value])
+        event.target.value = ""
       }
     }
   }
