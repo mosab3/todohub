@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { useState, useEffect } from "react"
+import { Html } from "next/document"
 
 export function Container({ children }) {
     return (
@@ -36,7 +38,38 @@ export function List({ children }) {
     )
 }
 
+export function Switch({label, onChange, checked}) {
+    return (
+    <div className="form-check form-switch">
+        <input type="checkbox" className="form-check-input" onChange={onChange} checked={checked} role="switch" />
+        <label className="form-check-label">{label}</label>
+    </div>
+
+    )
+}
+
 export function Navbar() {
+    const [darkMode, setDarkMode] = useState('light');
+
+    useEffect(() => {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const storedDarkMode = localStorage.getItem('darkMode');
+        if (storedDarkMode) {
+          setDarkMode(storedDarkMode);
+          document.documentElement.setAttribute('data-bs-theme', storedDarkMode);
+        }
+      }
+    }, []);
+  
+    const toggleDarkMode = () => {
+      const newMode = darkMode === 'light' ? 'dark' : 'light';
+      setDarkMode(newMode);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('darkMode', newMode);
+      }
+      document.documentElement.setAttribute('data-bs-theme', newMode);
+    };
+    
     return (
         <>
             <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -54,7 +87,7 @@ export function Navbar() {
                                 <Link className="nav-link" href="/about">About</Link>
                             </li>
                         </ul>
-
+                        <Switch onChange={toggleDarkMode} checked={darkMode === 'dark'} label="Dark Mode" />
                     </div>
                 </div>
             </nav>
