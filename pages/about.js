@@ -1,9 +1,10 @@
-import { Container, Card } from '@/components/main'
+import { Container, Card, Navbar } from '@/components/main'
 
 
 export default function About() {
     return (
         <>
+            <Navbar />
             <Container>
                 <Card>
                     <h1 className="display-4">About Me</h1>
