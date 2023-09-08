@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Html } from "next/document"
 
 export function Container({ children }) {
@@ -49,17 +49,26 @@ export function Switch({label, onChange, checked}) {
 }
 
 export function Navbar() {
-    const [isChecked, setIsChecked] = useState(false)
+    const [darkMode, setDarkMode] = useState('light');
 
-    const handleToggle = () => {
-        let html = document.documentElement
-        setIsChecked(!isChecked);
-        if (isChecked == false) {
-            html.setAttribute("data-bs-theme", "dark")
-        } else {
-            html.setAttribute("data-bs-theme", "light")
+    useEffect(() => {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const storedDarkMode = localStorage.getItem('darkMode');
+        if (storedDarkMode) {
+          setDarkMode(storedDarkMode);
+          document.documentElement.setAttribute('data-bs-theme', storedDarkMode);
         }
-    }
+      }
+    }, []);
+  
+    const toggleDarkMode = () => {
+      const newMode = darkMode === 'light' ? 'dark' : 'light';
+      setDarkMode(newMode);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('darkMode', newMode);
+      }
+      document.documentElement.setAttribute('data-bs-theme', newMode);
+    };
     
     return (
         <>
@@ -78,7 +87,7 @@ export function Navbar() {
                                 <Link className="nav-link" href="/about">About</Link>
                             </li>
                         </ul>
-                        <Switch onChange={handleToggle} checked={isChecked} label="Dark Mode" />
+                        <Switch onChange={toggleDarkMode} checked={darkMode === 'dark'} label="Dark Mode" />
                     </div>
                 </div>
             </nav>
