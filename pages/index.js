@@ -5,21 +5,23 @@ import { useState } from 'react'
 export default function Home() {
 
   const [todo, setTodo] = useState([])
+  const [message, setMessage] = useState('')
 
   const handelEnter = (event) => {
-    let value = event.target.value
+    console.log(event)
+    let value = message.trim()
     let isObjPresent = todo.some(obj => {
-      return obj.text === event.target.value
+      return obj.text === value
     })
-    if (event.key == 'Enter') {
+    if (event.key == 'Enter' || event.type == 'click') {
       if (value != "" && isObjPresent == false) {
         setTodo(
           [
-            {text: value.trim(), checked: false},
+            {text: value, checked: false},
             ...todo,
           ]  
         )
-        event.target.value = ""
+        setMessage("")
       }
     }
   }
@@ -38,6 +40,10 @@ export default function Home() {
 
   }
 
+  const handelDelete = (textToDelete) => {
+    const updatedTodo = todo.filter((obj) => obj.text !== textToDelete);
+    setTodo(updatedTodo);
+  }
 
   return (
     <>
@@ -46,22 +52,29 @@ export default function Home() {
         <Card>
           <List>
             <div className='mb-3'>
-              <input className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
+              <div className='input-group flex-nowrap'>
+                <span className='input-group-text'><i class="bi bi-plus-lg" onClick={handelEnter}></i></span>
+                <input value={message} onChange={event => setMessage(event.target.value)} className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
+              </div>
             </div>
             <div className='mb-3'>
                 <List>
                   {todo.filter(obj => {
                       return obj.checked === false
                     }).map((value, index) =>(
-                    <li className='list-group-item' key={index}>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      key={index}
-                      value={value.text}
-                      onChange={handelCheck}
-                      checked={value.checked}
-                    /> {value.text}</li>
+                    <li className='list-group-item d-flex justify-content-between align-items-center' key={index}>
+                      <div>
+                      <input
+                        type='checkbox'
+                        className='form-check-input'
+                        key={index}
+                        value={value.text}
+                        onChange={handelCheck}
+                        checked={value.checked}
+                      /> {value.text}
+                      </div>
+                      <i className="bi bi-trash-fill" onClick={() => handelDelete(value.text)} />
+                    </li>
                   ))}
                 </List>
             </div>
@@ -70,15 +83,20 @@ export default function Home() {
                     {todo.filter(obj => {
                       return obj.checked === true
                     }).map((value, index) =>(
-                    <li className='list-group-item list-group-item-secondary' key={index}>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      key={index}
-                      value={value.text}
-                      onChange={handelCheck}
-                      checked={value.checked}
-                    /> {value.text}</li>
+                    <li className='list-group-item d-flex justify-content-between align-items-center list-group-item-secondary' key={index}>
+                      <div>
+                        <input
+                          type='checkbox'
+                          className='form-check-input'
+                          key={index}
+                          value={value.text}
+                          onChange={handelCheck}
+                          checked={value.checked}
+                          
+                        /> {value.text}
+                      </div>
+                      <i className="bi bi-trash-fill" onClick={() => handelDelete(value.text)} />
+                    </li>
                   ))}
                 </List>
             </div>
