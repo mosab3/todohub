@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { useState } from "react"
+import { Html } from "next/document"
 
 export function Container({ children }) {
     return (
@@ -36,7 +38,29 @@ export function List({ children }) {
     )
 }
 
+export function Switch({label, onChange, checked}) {
+    return (
+    <div className="form-check form-switch">
+        <input type="checkbox" className="form-check-input" onChange={onChange} checked={checked} role="switch" />
+        <label className="form-check-label">{label}</label>
+    </div>
+
+    )
+}
+
 export function Navbar() {
+    const [isChecked, setIsChecked] = useState(false)
+
+    const handleToggle = () => {
+        let html = document.documentElement
+        setIsChecked(!isChecked);
+        if (isChecked == false) {
+            html.setAttribute("data-bs-theme", "dark")
+        } else {
+            html.setAttribute("data-bs-theme", "light")
+        }
+    }
+    
     return (
         <>
             <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -54,7 +78,7 @@ export function Navbar() {
                                 <Link className="nav-link" href="/about">About</Link>
                             </li>
                         </ul>
-
+                        <Switch onChange={handleToggle} checked={isChecked} label="Dark Mode" />
                     </div>
                 </div>
             </nav>

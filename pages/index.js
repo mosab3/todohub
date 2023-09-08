@@ -1,4 +1,4 @@
-import { Container, Card, List } from '@/components/main'
+import { Container, Card, List, Navbar } from '@/components/main'
 import { useState } from 'react'
 
 
@@ -34,6 +34,7 @@ export default function Home() {
 
   return (
     <>
+      <Navbar />
       <Container>
         <Card>
           <List>
