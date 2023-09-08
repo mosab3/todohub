@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { Html } from "next/document"
 
 export function Container({ children }) {
     return (
