@@ -5,21 +5,23 @@ import { useState } from 'react'
 export default function Home() {
 
   const [todo, setTodo] = useState([])
+  const [message, setMessage] = useState('')
 
   const handelEnter = (event) => {
-    let value = event.target.value
+    console.log(event)
+    let value = message.trim()
     let isObjPresent = todo.some(obj => {
-      return obj.text === event.target.value
+      return obj.text === value
     })
-    if (event.key == 'Enter') {
+    if (event.key == 'Enter' || event.type == 'click') {
       if (value != "" && isObjPresent == false) {
         setTodo(
           [
-            {text: value.trim(), checked: false},
+            {text: value, checked: false},
             ...todo,
           ]  
         )
-        event.target.value = ""
+        setMessage("")
       }
     }
   }
@@ -50,7 +52,10 @@ export default function Home() {
         <Card>
           <List>
             <div className='mb-3'>
-              <input className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
+              <div className='input-group flex-nowrap'>
+                <span className='input-group-text'><i class="bi bi-plus-lg" onClick={handelEnter}></i></span>
+                <input value={message} onChange={event => setMessage(event.target.value)} className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
+              </div>
             </div>
             <div className='mb-3'>
                 <List>
