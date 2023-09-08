@@ -38,6 +38,10 @@ export default function Home() {
 
   }
 
+  const handelDelete = (textToDelete) => {
+    const updatedTodo = todo.filter((obj) => obj.text !== textToDelete);
+    setTodo(updatedTodo);
+  }
 
   return (
     <>
@@ -53,15 +57,19 @@ export default function Home() {
                   {todo.filter(obj => {
                       return obj.checked === false
                     }).map((value, index) =>(
-                    <li className='list-group-item' key={index}>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      key={index}
-                      value={value.text}
-                      onChange={handelCheck}
-                      checked={value.checked}
-                    /> {value.text}</li>
+                    <li className='list-group-item d-flex justify-content-between align-items-center' key={index}>
+                      <div>
+                      <input
+                        type='checkbox'
+                        className='form-check-input'
+                        key={index}
+                        value={value.text}
+                        onChange={handelCheck}
+                        checked={value.checked}
+                      /> {value.text}
+                      </div>
+                      <i className="bi bi-trash-fill" onClick={() => handelDelete(value.text)} />
+                    </li>
                   ))}
                 </List>
             </div>
@@ -70,15 +78,20 @@ export default function Home() {
                     {todo.filter(obj => {
                       return obj.checked === true
                     }).map((value, index) =>(
-                    <li className='list-group-item list-group-item-secondary' key={index}>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      key={index}
-                      value={value.text}
-                      onChange={handelCheck}
-                      checked={value.checked}
-                    /> {value.text}</li>
+                    <li className='list-group-item d-flex justify-content-between align-items-center list-group-item-secondary' key={index}>
+                      <div>
+                        <input
+                          type='checkbox'
+                          className='form-check-input'
+                          key={index}
+                          value={value.text}
+                          onChange={handelCheck}
+                          checked={value.checked}
+                          
+                        /> {value.text}
+                      </div>
+                      <i className="bi bi-trash-fill" onClick={() => handelDelete(value.text)} />
+                    </li>
                   ))}
                 </List>
             </div>
