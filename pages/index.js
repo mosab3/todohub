@@ -68,47 +68,52 @@ export default function Home() {
               </div>
             </div>
             <div className='mb-3'>
-                <List>
                   {todo.filter(obj => {
                       return obj.checked === false
                     }).map((value, index) =>(
-                    <li className='list-group-item d-flex justify-content-between align-items-center' key={index}>
-                      <div>
-                      <input
-                        type='checkbox'
-                        className='form-check-input'
-                        key={index}
-                        value={value.text}
-                        onChange={handelCheck}
-                        checked={value.checked}
-                      /> {value.text}
+                      <div className='input-group mb-1' key={index}>
+                        <span className='input-group-text'>
+                          <input
+                            type='checkbox'
+                            className='form-check-input mt-0'
+                            key={index}
+                            value={value.text}
+                            onChange={handelCheck}
+                            checked={value.checked}
+                          />
+                        </span>
+                        <div className='form-control'>
+                          {value.text}
+                        </div>
+                        <span className='input-group-text' onClick={() => handelDelete(value.text)}>
+                          <i className="bi bi-trash-fill"  />
+                        </span>
                       </div>
-                      <i className="bi bi-trash-fill" onClick={() => handelDelete(value.text)} />
-                    </li>
                   ))}
-                </List>
             </div>
             <div className=''>
-                <List>
                     {todo.filter(obj => {
                       return obj.checked === true
                     }).map((value, index) =>(
-                    <li className='list-group-item d-flex justify-content-between align-items-center list-group-item-secondary' key={index}>
-                      <div>
-                        <input
-                          type='checkbox'
-                          className='form-check-input'
-                          key={index}
-                          value={value.text}
-                          onChange={handelCheck}
-                          checked={value.checked}
-                          
-                        /> {value.text}
+                      <div className='input-group mb-1 grayed-out' key={index}>
+                        <span className='input-group-text'>
+                          <input
+                            type='checkbox'
+                            className='form-check-input mt-0'
+                            key={index}
+                            value={value.text}
+                            onChange={handelCheck}
+                            checked={value.checked}
+                          />
+                        </span>
+                        <div className='form-control bg-secondary-subtle'>
+                          {value.text}
+                        </div>
+                        <span className='input-group-text' onClick={() => handelDelete(value.text)}>
+                          <i className="bi bi-trash-fill" />
+                        </span>
                       </div>
-                      <i className="bi bi-trash-fill" onClick={() => handelDelete(value.text)} />
-                    </li>
-                  ))}
-                </List>
+                    ))}
             </div>
           </List>
         </Card>
