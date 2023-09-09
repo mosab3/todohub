@@ -1,5 +1,5 @@
 import { Container, Card, List, Navbar } from '@/components/main'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 
 export default function Home() {
@@ -7,20 +7,26 @@ export default function Home() {
   const [todo, setTodo] = useState([])
   const [message, setMessage] = useState('')
 
+  useEffect(() => {
+    const localList = localStorage.getItem('list');
+    if (localList) {
+      setTodo(JSON.parse(localList))
+    }
+  }, [])
+
   const handelEnter = (event) => {
-    console.log(event)
     let value = message.trim()
     let isObjPresent = todo.some(obj => {
       return obj.text === value
     })
     if (event.key == 'Enter' || event.type == 'click') {
       if (value != "" && isObjPresent == false) {
-        setTodo(
-          [
-            {text: value, checked: false},
-            ...todo,
-          ]  
-        )
+        const updatedTodo = [
+          {text: value, checked: false},
+          ...todo,
+        ]
+        setTodo(updatedTodo)
+        localStorage.setItem('list', JSON.stringify(updatedTodo))
         setMessage("")
       }
     }
@@ -29,20 +35,24 @@ export default function Home() {
   const handelCheck = (event) => {
     let checked = event.target.checked
     let value = event.target.value
-    setTodo((prevTodo) => {
+    const updatedTodo = (prevTodo, checked, value) => {
       return prevTodo.map((obj) => {
         if (obj.text === value) {
           return { ...obj, checked };
         }
         return obj;
       });
-    });
+    }
+    const reserveTodo = updatedTodo(todo, checked, value)
+    setTodo(reserveTodo);
+    localStorage.setItem('list', JSON.stringify(reserveTodo))
 
   }
 
   const handelDelete = (textToDelete) => {
     const updatedTodo = todo.filter((obj) => obj.text !== textToDelete);
     setTodo(updatedTodo);
+    localStorage.setItem('list', JSON.stringify(updatedTodo))
   }
 
   return (
