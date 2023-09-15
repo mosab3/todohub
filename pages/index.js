@@ -1,4 +1,5 @@
 import { Container, Card, List, Navbar } from '@/components/main'
+import { Items } from '@/components/list'
 import { useState, useEffect } from 'react'
 
 
@@ -67,54 +68,22 @@ export default function Home() {
                 <input dir='auto' value={message} onChange={event => setMessage(event.target.value)} className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
               </div>
             </div>
-            <div className='mb-3'>
-                  {todo.filter(obj => {
-                      return obj.checked === false
-                    }).map((value, index) =>(
-                      <div className='input-group mb-1' key={index}>
-                        <span className='input-group-text'>
-                          <input
-                            type='checkbox'
-                            className='form-check-input mt-0'
-                            key={index}
-                            value={value.text}
-                            onChange={handelCheck}
-                            checked={value.checked}
-                          />
-                        </span>
-                        <div dir='auto' className='form-control'>
-                          {value.text}
-                        </div>
-                        <span className='input-group-text' onClick={() => handelDelete(value.text)}>
-                          <i className="bi bi-trash-fill"  />
-                        </span>
-                      </div>
-                  ))}
-            </div>
-            <div className=''>
-                    {todo.filter(obj => {
-                      return obj.checked === true
-                    }).map((value, index) =>(
-                      <div className='input-group mb-1 grayed-out' key={index}>
-                        <span className='input-group-text'>
-                          <input
-                            type='checkbox'
-                            className='form-check-input mt-0'
-                            key={index}
-                            value={value.text}
-                            onChange={handelCheck}
-                            checked={value.checked}
-                          />
-                        </span>
-                        <div dir='auto' className='form-control bg-secondary-subtle'>
-                          {value.text}
-                        </div>
-                        <span className='input-group-text' onClick={() => handelDelete(value.text)}>
-                          <i className="bi bi-trash-fill" />
-                        </span>
-                      </div>
-                    ))}
-            </div>
+            <Items
+              arr={todo}
+              isChecked={false}
+              onCheck={handelCheck}
+              onDelete={handelDelete}
+              isDivSpace={true}
+            />
+            
+            <Items
+              arr={todo}
+              isChecked={true}
+              onCheck={handelCheck}
+              onDelete={handelDelete}
+              isDivSpace={false}
+              isGrayedOut={true}
+            />
           </List>
         </Card>
       </Container>
