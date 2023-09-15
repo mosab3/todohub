@@ -63,8 +63,8 @@ export default function Home() {
           <List>
             <div className='mb-3'>
               <div className='input-group flex-nowrap'>
-                <span className='input-group-text'><i class="bi bi-plus-lg" onClick={handelEnter}></i></span>
-                <input value={message} onChange={event => setMessage(event.target.value)} className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
+                <span className='input-group-text'><i className="bi bi-plus-lg" onClick={handelEnter}></i></span>
+                <input dir='auto' value={message} onChange={event => setMessage(event.target.value)} className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
               </div>
             </div>
             <div className='mb-3'>
@@ -82,7 +82,7 @@ export default function Home() {
                             checked={value.checked}
                           />
                         </span>
-                        <div className='form-control'>
+                        <div dir='auto' className='form-control'>
                           {value.text}
                         </div>
                         <span className='input-group-text' onClick={() => handelDelete(value.text)}>
@@ -106,7 +106,7 @@ export default function Home() {
                             checked={value.checked}
                           />
                         </span>
-                        <div className='form-control bg-secondary-subtle'>
+                        <div dir='auto' className='form-control bg-secondary-subtle'>
                           {value.text}
                         </div>
                         <span className='input-group-text' onClick={() => handelDelete(value.text)}>
