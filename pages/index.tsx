@@ -1,10 +1,16 @@
 import { Container, Card, List, Navbar } from '@/components/main'
 import { useState, useEffect } from 'react'
+import toast, {Toaster} from 'react-hot-toast'
 
 
 export default function Home() {
 
-  const [todo, setTodo] = useState([])
+  interface Todo {
+    text: string,
+    checked: boolean
+  }
+
+  const [todo, setTodo] = useState<Todo[]>([])
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -20,8 +26,14 @@ export default function Home() {
       return obj.text === value
     })
     if (event.key == 'Enter' || event.type == 'click') {
-      if (value != "" && isObjPresent == false) {
-        const updatedTodo = [
+      if (isObjPresent) {
+        toast.error('This task is already present.')
+
+      } else if (value == "") {
+        toast.error('Can not submit an empty task.')
+
+      } else {
+        const updatedTodo: Todo[] = [
           {text: value, checked: false},
           ...todo,
         ]
@@ -35,7 +47,7 @@ export default function Home() {
   const handelCheck = (event) => {
     let checked = event.target.checked
     let value = event.target.value
-    const updatedTodo = (prevTodo, checked, value) => {
+    const updatedTodo = (prevTodo: Todo[], checked: boolean, value: string) => {
       return prevTodo.map((obj) => {
         if (obj.text === value) {
           return { ...obj, checked };
@@ -57,6 +69,7 @@ export default function Home() {
 
   return (
     <>
+      <Toaster />
       <Navbar />
       <Container>
         <Card>
