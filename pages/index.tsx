@@ -1,4 +1,5 @@
 import { Container, Card, List, Navbar } from '@/components/main'
+import { PlusIcon, TrashIcon } from '@/components/icons'
 import { useState, useEffect } from 'react'
 import toast, {Toaster} from 'react-hot-toast'
 
@@ -76,7 +77,7 @@ export default function Home() {
           <List>
             <div className='mb-3'>
               <div className='input-group flex-nowrap'>
-                <span className='input-group-text'><i className="bi bi-plus-lg" onClick={handelEnter}></i></span>
+                <span className='input-group-text' onClick={() => handelEnter(event)}><PlusIcon /></span>
                 <input value={message} onChange={event => setMessage(event.target.value)} className='form-control' placeholder='fix that bug...' onKeyDown={handelEnter}/>
               </div>
             </div>
@@ -99,7 +100,7 @@ export default function Home() {
                           {value.text}
                         </div>
                         <span className='input-group-text' onClick={() => handelDelete(value.text)}>
-                          <i className="bi bi-trash-fill"  />
+                          <TrashIcon />
                         </span>
                       </div>
                   ))}
@@ -123,7 +124,7 @@ export default function Home() {
                           {value.text}
                         </div>
                         <span className='input-group-text' onClick={() => handelDelete(value.text)}>
-                          <i className="bi bi-trash-fill" />
+                          <TrashIcon />
                         </span>
                       </div>
                     ))}
