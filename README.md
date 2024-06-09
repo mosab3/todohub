@@ -20,10 +20,10 @@ TodoHub is a simple yet powerful TODO list application built using Next.js. It a
 ## Features
 
 - Simple UI.
-- Add, edit, and delete tasks
-- Mark tasks as completed
-- Filter tasks by status (all, completed, incomplete)
-- Responsive design for mobile and desktop
+- Add and delete tasks.
+- Edit uncompleted tasks.
+- Mark tasks as completed.
+- Responsive design for mobile and desktop.
 - Data stored locally: Tasks are stored in the browser's local storage, ensuring privacy and no server dependency
 
 ## Getting Started
