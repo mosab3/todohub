@@ -19,3 +19,12 @@ export function TrashIcon() {
         </>
     )
 }
+
+export function EditIcon() {
+
+    return (
+        <>
+            <i className="bi bi-pencil-square" />
+        </>
+    )
+}
