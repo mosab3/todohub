@@ -1,5 +1,6 @@
-import { Container, Card, List, Navbar } from '@/components/main'
+import { Container, Card, Navbar } from '@/components/main'
 import { PlusIcon, TrashIcon, EditIcon } from '@/components/icons'
+import { List, Items, TaskType } from '@/components/list'
 import React, { useState, useEffect, useRef } from 'react'
 import toast, {Toaster} from 'react-hot-toast'
 
@@ -162,65 +163,22 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className='mb-3'>
-                  {todo.filter(obj => {
-                      return obj.checked === false
-                    }).map((value, index) =>(
-                      <div className='input-group mb-1' key={index}>
-                        <span className='input-group-text'>
-                          <input
-                            type='checkbox'
-                            className='form-check-input mt-0'
-                            key={index}
-                            value={value.text}
-                            onChange={(event) => handelCheck(event, index)}
-                            checked={value.checked}
-                          />
-                        </span>
-                        {value.isEditing ?
-                        <input type="text"
-                          value={editMessage}
-                          onChange={(event) => setEditMessage(event.target.value)}
-                          className='form-control'
-                          onKeyDown={(event) => handelEnter(event, true, index)}
-                          autoFocus
-                          
-                        />
-                        :(<div className='form-control'>{value.text}</div>)
-                        }
-                        <span className='input-group-text' onClick={() => handelDelete(value.text)}>
-                          <TrashIcon />
-                        </span>
-                        <span className='input-group-text' onClick={() => handelEdit(index)}>
-                          <EditIcon />
-                        </span>
-                      </div>
-                  ))}
-            </div>
-            <div className=''>
-                    {todo.filter(obj => {
-                      return obj.checked === true
-                    }).map((value, index) =>(
-                      <div className='input-group mb-1 grayed-out' key={index}>
-                        <span className='input-group-text'>
-                          <input
-                            type='checkbox'
-                            className='form-check-input mt-0'
-                            key={index}
-                            value={value.text}
-                            onChange={handelCheck}
-                            checked={value.checked}
-                          />
-                        </span>
-                        <div className='form-control bg-secondary-subtle'>
-                          {value.text}
-                        </div>
-                        <span className='input-group-text' onClick={() => handelDelete(value.text)}>
-                          <TrashIcon />
-                        </span>
-                      </div>
-                    ))}
-            </div>
+            <Items
+              taskType={TaskType.Uncompleted}
+              todo={todo}
+              handelEdit={handelEdit}
+              handelCheck={handelCheck}
+              handelDelete={handelDelete}
+              handelEnter={handelEnter}
+              editMessage={editMessage}
+              setEditMessage={setEditMessage}
+            />
+            <Items
+              taskType={TaskType.Completed}
+              todo={todo}
+              handelCheck={handelCheck}
+              handelDelete={handelDelete}
+            />
           </List>
         </Card>
       </Container>
