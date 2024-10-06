@@ -1,5 +1,5 @@
 import { Container, Card, Navbar } from '@/components/main'
-import { PlusIcon, TrashIcon, EditIcon } from '@/components/icons'
+import { PlusIcon, TrashIcon, EditIcon, ShareIcon } from '@/components/icons'
 import { List, Items, TaskType } from '@/components/list'
 import React, { useState, useEffect, useRef } from 'react'
 import toast, {Toaster} from 'react-hot-toast'
@@ -149,9 +149,21 @@ export default function Home() {
           <List>
             <div className='mb-3'>
               <div className='input-group flex-nowrap'>
-                <span className='input-group-text' onClick={(event) => handelEnter(event)}>
-                <PlusIcon />
-                </span>
+                  <span className='input-group-text'>
+                    <div className='hstack gap-2'>
+                      <div className=''>
+                        <span onClick={(event) => handelEnter(event)}>
+                          <PlusIcon />
+                        </span>
+                      </div>
+                      <div className='vr'></div>
+                      <div className=''>
+                        <span onClick={() => console.log('Share icon clicked.')}>
+                          <ShareIcon />
+                        </span>
+                      </div>
+                    </div>
+                  </span>
                 <input
                   value={message}
                   onChange={event => setMessage(event.target.value)}

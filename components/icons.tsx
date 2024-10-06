@@ -28,3 +28,12 @@ export function EditIcon() {
         </>
     )
 }
+
+export function ShareIcon() {
+
+    return (
+        <>
+            <i className="bi bi-share-fill" />
+        </>
+    )
+}
