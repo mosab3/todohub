@@ -1,100 +1,78 @@
 # TodoHub
 
-Yet Another TODO List
-
-## Table of Contents
-
-- [About](#about)
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
-## About
-
-TodoHub is a simple yet powerful TODO list application built using Next.js. It allows users to efficiently manage their tasks with a clean, simple and intuitive interface.
+TodoHub is a privacy-focused task management application built with **Next.js** and **TypeScript**. It features a clean, responsive interface for managing your to-dos, with no server-side storage, your data stays in your browser.
 
 ## Features
+- **Task Management:** Add, edit, and delete tasks.
+- **Privacy-Focused:** No data is stored on any server. All tasks are saved locally using browser storage.
+- **Completion Status:** Mark tasks as complete or incomplete.
+- **Responsive Design:** Optimized for both desktop and mobile devices.
 
-- Simple UI.
-- Add and delete tasks.
-- Edit uncompleted tasks.
-- Mark tasks as completed.
-- Responsive design for mobile and desktop.
-- Data stored locally: Tasks are stored in the browser's local storage, ensuring privacy and no server dependency
+## Technologies Used
+- **Next.js**: Framework for server-side rendering and React.
+- **TypeScript**: Static typing for JavaScript.
+- **Local Storage**: Data persistence in the browser.
 
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
-
 ### Prerequisites
-
-You need to have Node.js and npm (or yarn) installed on your machine.
-
-- Node.js: [Download and Install Node.js](https://nodejs.org/)
-- npm comes with Node.js, but you can also install it separately: [Install npm](https://www.npmjs.com/get-npm)
+- [Node.js](https://nodejs.org/) (v14.x or higher)
+- [npm](https://npmjs.com) or [Yarn](https://yarnpkg.com/)
 
 ### Installation
+Clone the repository:
+```bash
+git clone https://github.com/mosab3/todohub.git
+cd todohub
+npm install
+```
 
-1. Clone the repo
-   ```sh
-   git clone https://github.com/mosab3/todohub.git
-   ```
+### Running the Application
+To start the development server, run:
+```bash
+npm run dev
+# or
+yarn dev
+```
+The app will be available at `http://localhost:3000`.
 
-2. Navigate to the project directory
-   ```sh
-   cd todohub
-   ```
+### Build for Production
+To build the project for production:
+```bash
+npm run build
+```
+This will generate an optimized build in the `.next` directory.
 
-3. Install dependencies
-   ```sh
-   npm install
-   # or
-   yarn install
-   ```
+### Linting and Formatting
+- Run ESLint:
+```bash
+npm run lint
+```
+- Format code with Prettier:
+```bash
+npm run format
+```
 
-### Running the Development Server
-
-1. Start the development server
-   ```sh
-   npm run dev
-   # or
-   npx next dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   ```
-2. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Usage
-
-Locate to [http://localhost:3000/](http://localhost:3000/) and start writing your tasks
-
-## Deployment
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Folder Structure
+```bash
+.
+├── components      # Reusable UI components
+├── pages           # Next.js pages and routes
+├── public          # Static assets
+├── styles          # Global and modular CSS
+# └── utils           # Utility functions
+```
 
 ## Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Contributions are welcome! Please follow these steps:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -m 'Add YourFeature'`).
+4. Push to your branch (`git push origin feature/YourFeature`).
+5. Open a pull request.
 
 ## License
-
-MIT License
+This project is licensed under the MIT License.
 
 ## Contact
-
-Project Link: [https://github.com/mosab3/todohub](https://github.com/mosab3/todohub)
-
+For any questions or feedback, please reach out through the repository's [issues](https://github.com/mosab3/todohub/issues).
