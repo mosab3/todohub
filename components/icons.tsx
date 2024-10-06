@@ -37,3 +37,12 @@ export function ShareIcon() {
         </>
     )
 }
+
+export function LoadingIcon() {
+    
+    return (
+        <>
+            <div className="spinner-border text-primary" role="status" />
+        </>
+    )
+}
