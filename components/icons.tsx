@@ -28,3 +28,21 @@ export function EditIcon() {
         </>
     )
 }
+
+export function ShareIcon() {
+
+    return (
+        <>
+            <i className="bi bi-share-fill" />
+        </>
+    )
+}
+
+export function LoadingIcon() {
+    
+    return (
+        <>
+            <div className="spinner-border text-primary" role="status" />
+        </>
+    )
+}

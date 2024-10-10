@@ -1,5 +1,5 @@
-import { Container, Card, Navbar } from '@/components/main'
-import { PlusIcon, TrashIcon, EditIcon } from '@/components/icons'
+import { Container, Card, Navbar, ShareModal, Todo } from '@/components/main'
+import { PlusIcon, TrashIcon, EditIcon, ShareIcon } from '@/components/icons'
 import { List, Items, TaskType } from '@/components/list'
 import React, { useState, useEffect, useRef } from 'react'
 import toast, {Toaster} from 'react-hot-toast'
@@ -7,16 +7,12 @@ import toast, {Toaster} from 'react-hot-toast'
 
 export default function Home() {
 
-  interface Todo {
-    text: string,
-    checked: boolean
-    isEditing: boolean
-  }
-
   const [todo, setTodo] = useState<Todo[]>([]);
   const [message, setMessage] = useState('');
   const [editMessage, setEditMessage] = useState('');
   const refMessage = useRef(null);
+  const refOpenModal = useRef<HTMLButtonElement>(null)
+
 
   useEffect(() => {
     const localList = localStorage.getItem('list');
@@ -64,7 +60,6 @@ export default function Home() {
       } else {
         value = message.trim()
       }
-      console.log(value);
       let isObjPresent = todo.some(obj => {
         return obj.text === value
       })
@@ -104,7 +99,6 @@ export default function Home() {
     if (index) {
       let beenEditing = [...todo][index]
       let isBeenEditing = beenEditing.isEditing
-      console.log(isBeenEditing)
       if (isBeenEditing) {
         toast.error('Can not complete a task while it\'s been edited.')
         return;
@@ -144,14 +138,31 @@ export default function Home() {
     <>
       <Toaster />
       <Navbar />
+      <ShareModal
+        todo={todo}
+        setTodo={setTodo}
+        refOpen={refOpenModal}
+      />
       <Container>
         <Card>
           <List>
             <div className='mb-3'>
               <div className='input-group flex-nowrap'>
-                <span className='input-group-text' onClick={(event) => handelEnter(event)}>
-                <PlusIcon />
-                </span>
+                  <span className='input-group-text'>
+                    <div className='hstack gap-2'>
+                      <div>
+                        <span onClick={(event) => handelEnter(event)}>
+                          <PlusIcon />
+                        </span>
+                      </div>
+                      <div className='vr'></div>
+                      <div>
+                        <span onClick={() => refOpenModal.current.click()}>
+                          <ShareIcon />
+                        </span>
+                      </div>
+                    </div>
+                  </span>
                 <input
                   value={message}
                   onChange={event => setMessage(event.target.value)}
