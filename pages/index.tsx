@@ -1,8 +1,8 @@
-import { Container, Card, Navbar, ShareModal, Todo } from '@/components/main'
-import { PlusIcon, TrashIcon, EditIcon, ShareIcon } from '@/components/icons'
+import { Container, Card, Navbar, ShareModal, Todo, Wrapper, ToasterComponent } from '@/components/main'
+import { PlusIcon, ShareIcon } from '@/components/icons'
 import { List, Items, TaskType } from '@/components/list'
 import React, { useState, useEffect, useRef } from 'react'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 
 export default function Home() {
@@ -136,63 +136,65 @@ export default function Home() {
 
   return (
     <>
-      <Toaster />
-      <Navbar />
-      <ShareModal
-        todo={todo}
-        setTodo={setTodo}
-        refOpen={refOpenModal}
-      />
-      <Container>
-        <Card>
-          <List>
-            <div className='mb-3'>
-              <div className='input-group flex-nowrap'>
-                  <span className='input-group-text'>
-                    <div className='hstack gap-2'>
-                      <div>
-                        <span onClick={(event) => handelEnter(event)}>
-                          <PlusIcon />
-                        </span>
+      <Wrapper>
+        <ToasterComponent />
+        <Navbar />
+        <ShareModal
+          todo={todo}
+          setTodo={setTodo}
+          refOpen={refOpenModal}
+        />
+        <Container>
+          <Card>
+            <List>
+              <div className='mb-3'>
+                <div className='input-group flex-nowrap'>
+                    <span className='input-group-text'>
+                      <div className='hstack gap-2'>
+                        <div>
+                          <span onClick={(event) => handelEnter(event)}>
+                            <PlusIcon />
+                          </span>
+                        </div>
+                        <div className='vr'></div>
+                        <div>
+                          <span onClick={() => refOpenModal.current.click()}>
+                            <ShareIcon />
+                          </span>
+                        </div>
                       </div>
-                      <div className='vr'></div>
-                      <div>
-                        <span onClick={() => refOpenModal.current.click()}>
-                          <ShareIcon />
-                        </span>
-                      </div>
-                    </div>
-                  </span>
-                <input
-                  value={message}
-                  onChange={event => setMessage(event.target.value)}
-                  className='form-control'
-                  placeholder='fix that bug...'
-                  onKeyDown={(event) => handelEnter(event)}
-                  ref={refMessage}
-                  autoFocus
-                />
+                    </span>
+                  <input
+                    value={message}
+                    onChange={event => setMessage(event.target.value)}
+                    className='form-control'
+                    placeholder='fix that bug...'
+                    onKeyDown={(event) => handelEnter(event)}
+                    ref={refMessage}
+                    autoFocus
+                  />
+                </div>
               </div>
-            </div>
-            <Items
-              taskType={TaskType.Uncompleted}
-              todo={todo}
-              handelEdit={handelEdit}
-              handelCheck={handelCheck}
-              handelDelete={handelDelete}
-              handelEnter={handelEnter}
-              editMessage={editMessage}
-              setEditMessage={setEditMessage}
-            />
-            <Items
-              taskType={TaskType.Completed}
-              todo={todo}
-              handelCheck={handelCheck}
-              handelDelete={handelDelete}
-            />
-          </List>
-        </Card>
-      </Container>
+              <Items
+                taskType={TaskType.Uncompleted}
+                todo={todo}
+                handelEdit={handelEdit}
+                handelCheck={handelCheck}
+                handelDelete={handelDelete}
+                handelEnter={handelEnter}
+                editMessage={editMessage}
+                setEditMessage={setEditMessage}
+              />
+              <Items
+                taskType={TaskType.Completed}
+                todo={todo}
+                handelCheck={handelCheck}
+                handelDelete={handelDelete}
+              />
+            </List>
+          </Card>
+        </Container>
+      </Wrapper>
     </>
   )
 }
