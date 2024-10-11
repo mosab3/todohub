@@ -1,8 +1,8 @@
 import { Container, Card, Navbar, ShareModal, Todo, Wrapper, ToasterComponent } from '@/components/main'
-import { PlusIcon, TrashIcon, EditIcon, ShareIcon } from '@/components/icons'
+import { PlusIcon, ShareIcon } from '@/components/icons'
 import { List, Items, TaskType } from '@/components/list'
 import React, { useState, useEffect, useRef } from 'react'
-import toast, {Toaster} from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 
 export default function Home() {
