@@ -1,5 +1,13 @@
 import Link from "next/link"
-import { useState, useEffect, useRef, LegacyRef, Dispatch } from "react"
+import {
+    useState,
+    useEffect,
+    useRef,
+    createContext,
+    useContext,
+    LegacyRef,
+    Dispatch
+} from "react"
 import { QRCodeCanvas } from "qrcode.react"
 import { Scanner } from "@yudiel/react-qr-scanner"
 import toast, { Toaster } from "react-hot-toast"
@@ -10,6 +18,44 @@ export interface Todo {
     isEditing: boolean
   }
 
+
+interface ThemeContextProps {
+    darkMode: string,
+    setDarkMode: Dispatch<React.SetStateAction<string>>,
+    toggleDarkMode: () => void
+}
+export const ThemeContext = createContext<ThemeContextProps | null>(null)
+
+export function Wrapper({ children }) {
+    const [darkMode, setDarkMode] = useState('light');
+
+    useEffect(() => {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const storedDarkMode = localStorage.getItem('darkMode');
+        if (storedDarkMode) {
+          setDarkMode(storedDarkMode);
+          document.documentElement.setAttribute('data-bs-theme', storedDarkMode);
+        }
+      }
+    }, []);
+  
+    const toggleDarkMode = () => {
+      const newMode = darkMode === 'light' ? 'dark' : 'light';
+      setDarkMode(newMode);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('darkMode', newMode);
+      }
+      document.documentElement.setAttribute('data-bs-theme', newMode);
+    };
+
+    return(
+        <>
+            <ThemeContext.Provider value={{darkMode, setDarkMode, toggleDarkMode}}>
+                {children}
+            </ThemeContext.Provider>
+        </>
+    )
+}
 
 export function Container({ children }) {
     return (
@@ -58,27 +104,7 @@ export function Switch({label, onChange, checked}) {
 }
 
 export function Navbar() {
-    const [darkMode, setDarkMode] = useState('light');
-
-    useEffect(() => {
-      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        const storedDarkMode = localStorage.getItem('darkMode');
-        if (storedDarkMode) {
-          setDarkMode(storedDarkMode);
-          document.documentElement.setAttribute('data-bs-theme', storedDarkMode);
-        }
-      }
-    }, []);
-  
-    const toggleDarkMode = () => {
-      const newMode = darkMode === 'light' ? 'dark' : 'light';
-      setDarkMode(newMode);
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('darkMode', newMode);
-      }
-      document.documentElement.setAttribute('data-bs-theme', newMode);
-    };
-    
+    const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     return (
         <>
             <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -224,7 +250,6 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
     }
     return (
         <>
-            <Toaster />
             <button type="button" className="btn btn-primary" ref={refOpen} data-bs-toggle="modal" data-bs-target="#shareModal" hidden={true} />
             <div
                 className={`modal fade`}
@@ -255,4 +280,9 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
             </div>
         </>
     )
+}
+
+export function ToasterComponent() {
+    const {darkMode} = useContext(ThemeContext)
+    return <Toaster toastOptions={{className: `${darkMode === 'light' ? 'bg-light text-dark' : 'bg-dark text-light'}`}} />
 }
