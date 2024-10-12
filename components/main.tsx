@@ -61,7 +61,7 @@ export function Container({ children }) {
     return (
         <>
             <div className="d-flex justify-content-center">
-                <div className="pt-5" style={{width: '35rem'}}>
+                <div className="pt-5" style={{width: '42rem'}}>
                     <div className="container">
                         {children}
                     </div>
@@ -72,10 +72,19 @@ export function Container({ children }) {
 }
 
 export function Card({ children }) {
+    // return (
+    //     <>
+    //         <div className="card">
+    //             <div className="card-body">
+    //                 {children}
+    //             </div>
+    //         </div>
+    //     </>
+    // )
     return (
         <>
-            <div className="card">
-                <div className="card-body">
+            <div className="boarder bg-info rounded-5 bg-opacity-10">
+                <div className="p-5">
                     {children}
                 </div>
             </div>

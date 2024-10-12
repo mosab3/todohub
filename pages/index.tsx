@@ -191,6 +191,49 @@ export default function Home() {
                 handelCheck={handelCheck}
                 handelDelete={handelDelete}
               />
+              <div className='boarder bg-info rounded-5 bg-opacity-25'>
+                <div className='hstack gap-3'>
+                  {/* <div className='p-3'>
+                      <div className='vr'></div>
+                  </div> */}
+                  <div className='p-2'>
+                    <div
+                      className="d-flex justify-content-center align-items-center rounded-circle bg-info bg-opacity-25"
+                      style={{
+                        width: '2rem',
+                        height: '2rem',
+                      }}
+                    >
+                      <i className="bi bi-check-lg" />
+                  </div>
+
+                  </div>
+                  <div className='p-2'>
+                    <div className='rounded-5 bg-info bg-opacity-25'>
+                      <div className='p-3'>
+                        <div style={{width: '20.5rem', wordWrap: "break-word"}}>but cash flow problems led Budrys to buy the magazine after the first issue and publish it himself. There were 24 issues as a print magazine from 1993 to 1997, mostly on a bimonthly schedule. The magazine lost money, and in 1997 Budrys moved to online publishing, rebranding the magazine as tomorrowsf. Readership grew while the magazine was free on the web, but fell when Budrys began charging for subscriptions.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='p-2'>
+                    <div className='rounded-5 bg-info bg-opacity-25'>
+                      <div className='p-2'>
+                        <div className='hstack gap-1'>
+                          <div className='p-1'>
+                          <i className='bi bi-trash' />
+                          </div>
+                          <div className='p-1'>
+                          <div className='vr'></div>
+                          </div>
+                          <div className='p-1'>
+                          <i className='bi bi-pencil-square' />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </List>
           </Card>
         </Container>
