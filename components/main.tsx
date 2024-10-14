@@ -11,6 +11,9 @@ import {
 import { QRCodeCanvas } from "qrcode.react"
 import { Scanner } from "@yudiel/react-qr-scanner"
 import toast, { Toaster } from "react-hot-toast"
+// import BIRDS from 'vanta/dist/vanta.birds.min'
+import CLOUDS from "vanta/dist/vanta.clouds.min.js"
+import * as THREE from "three";
 
 export interface Todo {
     text: string,
@@ -58,12 +61,48 @@ export function Wrapper({ children }) {
 }
 
 export function Container({ children }) {
+    const [vantaEffect, setVantaEffect] = useState(null)
+    const { darkMode } = useContext(ThemeContext);
+    const parentRef = useRef(null)
+    useEffect(() => {
+      if (!vantaEffect) {
+
+        setVantaEffect(CLOUDS({
+          el: parentRef.current,
+          THREE: THREE,
+        }))
+      }
+      return () => {
+        // if (vantaEffect) vantaEffect.destroy()
+        if (vantaEffect) {
+            if (darkMode === "dark") {
+                vantaEffect.setOptions({
+                    skyColor: 0xd3ecf7,
+                    cloudColor: 0xf7f9ff,
+                    color: 0xffffff,
+                    backgroundColor: 0xffffff,
+                    
+                });
+            } else if (darkMode === "light") {
+                vantaEffect.setOptions({
+                    skyColor: 0x68b8d7,
+                    cloudColor: 0xadc1de,
+                    color: 0x000000,
+                    backgroundColor: 0x000000,          
+                });
+            }    
+        }
+      }
+    }, [darkMode, vantaEffect])
+
     return (
-        <>
-            <div className="d-flex justify-content-center">
-                <div className="pt-5" style={{width: '42rem'}}>
-                    <div className="container">
-                        {children}
+        <> 
+            <div className="vh-100" ref={parentRef}>
+                <div className="d-flex justify-content-center">
+                    <div className="pt-5" style={{width: '42rem'}}>
+                        <div className="container">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
