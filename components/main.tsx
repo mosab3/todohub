@@ -72,24 +72,24 @@ export function Container({ children }) {
 }
 
 export function Card({ children }) {
-    // return (
-    //     <>
-    //         <div className="card">
-    //             <div className="card-body">
-    //                 {children}
-    //             </div>
-    //         </div>
-    //     </>
-    // )
     return (
         <>
-            <div className="boarder bg-info rounded-5 bg-opacity-10">
-                <div className="p-5">
+            <div style={{border: 0, maxWidth: "100rem"}} className="card rounded-5 bg-primary bg-opacity-10">
+                <div className="card-body">
                     {children}
                 </div>
             </div>
         </>
     )
+    // return (
+    //     <>
+    //         <div className="boarder bg-info rounded-5 bg-opacity-10">
+    //             <div className="p-5">
+    //                 {children}
+    //             </div>
+    //         </div>
+    //     </>
+    // )
 }
 
 export function List({ children }) {
