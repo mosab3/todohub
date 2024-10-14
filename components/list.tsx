@@ -107,7 +107,7 @@ export function Items ({
                           return obj.checked === false
                       }
                     }).map((value, index) =>(
-                      <div className="p-2">
+                      <div className="p-2" key={index}>
                         <div className={`boarder bg-${taskType === TaskType.Completed ? 'success' : 'info'} rounded-5 bg-opacity-25`}>
                           <div className="container p-1">
                             <div className="hstack gap-1">
