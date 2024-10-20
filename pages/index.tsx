@@ -158,7 +158,7 @@ export default function Home() {
                         </div>
                         <div className='vr'></div>
                         <div>
-                          <span onClick={() => refOpenModal.current.click()}>
+                          <span onClick={() => refOpenModal.current?.click()}>
                             <ShareIcon />
                           </span>
                         </div>
