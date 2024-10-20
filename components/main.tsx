@@ -6,7 +6,8 @@ import {
     createContext,
     useContext,
     LegacyRef,
-    Dispatch
+    Dispatch,
+    MutableRefObject
 } from "react"
 import { QRCodeCanvas } from "qrcode.react"
 import { Scanner } from "@yudiel/react-qr-scanner"
@@ -130,27 +131,86 @@ export function Navbar() {
     )
 }
 
-interface ShareModalProps {
-    todo: Todo[],
-    setTodo: Dispatch<React.SetStateAction<Todo[]>>,
-    refOpen: LegacyRef<HTMLButtonElement>
+interface ModalProps {
+    children: React.ReactNode,
+    refCloseButton?: MutableRefObject<HTMLButtonElement>,
+    refOpenButton?: MutableRefObject<HTMLButtonElement>,
+    modalTitle?: string,
+
+    OnCloseModal: () => void
 }
 export enum ShareType {
     SEND,
     RECEIVE
 };
+export function Modal(props: ModalProps) {
+    const refClose = useRef<HTMLButtonElement>(null);
+    const [modalContent, setModalContent] = useState<React.ReactNode>(props.children)
 
+    useEffect(() => {
+        setModalContent(props.children);
+    }, [props.children]); // Dependency array includes props.children
+
+    return (
+        <>
+            <button
+                type="button"
+                className="btn btn-primary"
+                ref={props.refOpenButton}
+                data-bs-toggle="modal"
+                data-bs-target="#shareModal"
+                hidden={true}
+                />
+            <div
+                className={`modal fade`}
+                id="shareModal"
+                tabIndex={-1}
+                aria-labelledby="exampleModalLabel"
+                aria-hidden={true}
+            >
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">{ props.modalTitle }</h1>
+                        </div>
+                        <div className="modal-body">
+                            { modalContent }
+                        </div>
+                        <div className="modal-footer">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                ref={refClose}
+                                onClick={props.OnCloseModal}
+                                >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+
+}
+
+interface ShareModalProps {
+    todo: Todo[],
+    setTodo: Dispatch<React.SetStateAction<Todo[]>>,
+    refOpen: MutableRefObject<HTMLButtonElement>
+}
 export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
     const [shareType, setShareType] = useState<ShareType>(null)
     const [resultObjs, setResultObjs] = useState<Todo[]>([])
-    const refCloseModal = useRef<HTMLButtonElement>(null)
+    const refClose = useRef<HTMLButtonElement>(null)
     const validateSharedObjs = (sharedArray: Todo[]) => {
         const addTodo = () => {
             const existingItems = new Set(todo.map(items => items.text))
             const filteredList = sharedArray.filter(item => !existingItems.has(item.text))
             setTodo((prevList) => [...prevList, ...filteredList])
             toast.success('List added successfully.')
-            refCloseModal.current.click()
+            refClose.current?.click()
         }
         const localArray = sharedArray.map((value, index) => {
             return (
@@ -222,7 +282,7 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
                                         setResultObjs(newList)
                                     } catch (error) {
                                         toast.error("Error While reading the QR code, could not parse the List")
-                                        refCloseModal.current.click()
+                                        refClose.current.click()
                                     }
                                 }}
                                     formats={["qr_code"]}
@@ -248,22 +308,12 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
             )
         }
     }
+    const handleCloseModal = () => {
+        setShareType(null)
+    }
     return (
         <>
-            <button type="button" className="btn btn-primary" ref={refOpen} data-bs-toggle="modal" data-bs-target="#shareModal" hidden={true} />
-            <div
-                className={`modal fade`}
-                id="shareModal"
-                tabIndex={-1}
-                aria-labelledby="exampleModalLabel"
-                aria-hidden={true}
-            >
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="exampleModalLabel">Share List</h1>
-                    </div>
-                    <div className="modal-body">
+            <Modal refCloseButton={refClose} refOpenButton={refOpen} OnCloseModal={handleCloseModal}>
                         <div>
                             {modalBody()}
                         </div>
@@ -271,13 +321,8 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
                         <div>
                             <p className="fw-lighter">Share List between device using QR code</p>
                         </div>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" ref={refCloseModal} data-bs-dismiss="modal" onClick={() => setShareType(null)}>Close</button>
-                    </div>
-                    </div>
-                </div>
-            </div>
+
+            </Modal>
         </>
     )
 }
