@@ -276,15 +276,28 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
                             validateSharedObjs(resultObjs)
                         ) : (
                             <>
-                                <Scanner onScan={result => {
-                                    try {
-                                        const newList: Todo[] = JSON.parse(result[0].rawValue)
-                                        setResultObjs(newList)
-                                    } catch (error) {
-                                        toast.error("Error While reading the QR code, could not parse the List")
-                                        refClose.current.click()
-                                    }
-                                }}
+                                <Scanner
+                                    onScan={result => {
+                                        try {
+                                            const newList: Todo[] = JSON.parse(result[0].rawValue)
+                                            setResultObjs(newList)
+                                        } catch (error) {
+                                            toast.error("Error While reading the QR code, could not parse the List")
+                                            refClose.current.click()
+                                        }
+                                    }}
+                                    
+                                    onError={(error: Error) => {
+                                        if (error.name === "NotAllowedError") {
+                                            toast.error("Permission denied to access camera");
+                                        } else if (error.name === "NotFoundError") {
+                                            toast.error("No camera found");
+                                        } else {
+                                            toast.error(error.message);
+                                        }
+                                        setShareType(null)
+
+                                    }}
                                     formats={["qr_code"]}
                                     />
                                 <br />
@@ -298,11 +311,23 @@ export function ShareModal({todo, setTodo, refOpen}: ShareModalProps) {
             return (
                 <div className="hstack gap-2 justify-content-center">
                     <div className="p-2">
-                        <button type="button" className="btn btn-primary" onClick={() => setShareType(ShareType.SEND)}>Sender</button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => setShareType(ShareType.SEND)}
+                            >
+                            Sender
+                        </button>
                     </div>
                     <div className="vr"></div>
                     <div className="p-2">
-                        <button type="button" className="btn btn-primary" onClick={() => {setShareType(ShareType.RECEIVE); setResultObjs([])}}>Receiver</button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => {setShareType(ShareType.RECEIVE); setResultObjs([])}}
+                            >
+                            Receiver
+                        </button>
                     </div>
                 </div>
             )
