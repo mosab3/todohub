@@ -60,16 +60,18 @@ export function Items ({
                             checked={value.checked}
                           />
                         </span>
-                        {value.isEditing && taskType === TaskType.Uncompleted?
-                        <input type="text"
-                          value={editMessage}
-                          onChange={(event) => setEditMessage(event.target.value)}
-                          className='form-control'
-                          onKeyDown={(event) => handelEnter(event, true, index)}
-                          autoFocus
-                          
-                        />
-                        :(<div className={'form-control' + (taskType === TaskType.Completed ? ' bg-secondary-subtle' : '')}>{value.text}</div>)
+                        {
+                          value.isEditing && taskType === TaskType.Uncompleted ?
+                          <input type="text"
+                            value={editMessage}
+                            onChange={(event) => setEditMessage(event.target.value)}
+                            className='form-control'
+                            onKeyDown={(event) => handelEnter(event, true, index)}
+                            dir="auto"
+                            autoFocus
+                            
+                          />
+                          : (<div className={'form-control' + (taskType === TaskType.Completed ? ' bg-secondary-subtle' : '')} dir="auto">{value.text}</div>)
                         }
                         <span className='input-group-text' onClick={() => handelDelete(value.text)}>
                           <TrashIcon />

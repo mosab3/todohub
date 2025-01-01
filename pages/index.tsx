@@ -171,6 +171,7 @@ export default function Home() {
                     placeholder='fix that bug...'
                     onKeyDown={(event) => handelEnter(event)}
                     ref={refMessage}
+                    dir="auto"
                     autoFocus
                   />
                 </div>
