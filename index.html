@@ -2,9 +2,15 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/icon/icon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <!-- Absolute-URL tag: dropped at build time when the site URL is unknown. -->
+
+    <!-- Icons: SVG for modern browsers, PNG/ICO fallbacks, plus iOS home screen -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Dropped at build time when the site URL is unknown: these need absolute URLs. -->
     <link rel="canonical" href="%SITE_URL%/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
@@ -16,6 +22,7 @@
       name="description"
       content="A fast, private todo list where every task can carry its own steps. No account, no server - nothing leaves your device. Move your list between devices with a QR code."
     />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
 
     <!-- Link previews (Open Graph) ------------------------------------------ -->
     <meta property="og:type" content="website" />
@@ -42,6 +49,51 @@
     />
     <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
     <meta name="twitter:image:alt" content="TodoHub - a todo list with nested steps under each task" />
+
+    <!--
+      Structured data (JSON-LD). Describes only what is visible on the page.
+      Removed at build time when the site URL is unknown, because schema.org
+      identifiers and URLs must be absolute.
+      Validate changes with https://search.google.com/test/rich-results
+    -->
+    <script type="application/ld+json" data-requires-site-url>
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "%SITE_URL%/#website",
+            "url": "%SITE_URL%/",
+            "name": "TodoHub",
+            "description": "A local-first todo list where every task can carry its own steps.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "%SITE_URL%/#app",
+            "name": "TodoHub",
+            "url": "%SITE_URL%/",
+            "description": "A fast, private todo list with nested sub-lists. No account, no server - the list is stored in the browser and can be moved between devices with a QR code.",
+            "applicationCategory": "ProductivityApplication",
+            "operatingSystem": "Any modern browser",
+            "browserRequirements": "Requires JavaScript",
+            "isPartOf": { "@id": "%SITE_URL%/#website" },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Nested sub-lists for breaking a task into steps",
+              "Local-first storage that works offline",
+              "QR code list transfer between devices",
+              "Light and dark themes",
+              "Keyboard accessible"
+            ]
+          }
+        ]
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

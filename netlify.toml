@@ -10,13 +10,21 @@
   # Netlify changes its default runtime.
   NODE_VERSION = "20"
 
-# SPA fallback. The app uses react-router-dom (BrowserRouter), so routes are
-# resolved on the client. Without this, a direct visit to /about or a reload on
-# any sub-route returns a 404 instead of serving the app shell.
+# Client-side routes. The app uses react-router-dom (BrowserRouter), so these
+# paths must serve the app shell rather than a 404. A newly added route has to
+# be listed here too, otherwise a direct visit or reload will 404.
 [[redirects]]
-  from = "/*"
+  from = "/about"
   to = "/index.html"
   status = 200
+
+# Everything else is a genuine 404. The previous catch-all served the app shell
+# with a 200 for junk URLs, which search engines treat as soft 404s and may
+# index as thin pages. public/404.html is served instead, with a real 404.
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
 
 # Vite writes content-hashed filenames into /assets, so those never change
 # under a given URL and can be cached indefinitely.

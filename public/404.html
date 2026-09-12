@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Netlify serves this for paths matching no route, with a real 404 status. -->
+    <meta name="robots" content="noindex" />
+    <title>404 - Page not found - TodoHub</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap"
+    />
+    <style>
+      /* Self-contained: renders correctly with no JavaScript and no bundled CSS. */
+      :root {
+        --bg: #f7f8fb;
+        --surface: #ffffff;
+        --text: #0d0f14;
+        --text-2: #4a5060;
+        --text-3: #717889;
+        --border: #e3e6ef;
+        --accent: #4f46e5;
+        --accent-contrast: #ffffff;
+        --warn: #d97706;
+        --warn-soft: rgba(217, 119, 6, 0.12);
+        --aurora-1: rgba(99, 102, 241, 0.28);
+        --aurora-2: rgba(168, 85, 247, 0.22);
+        --aurora-3: rgba(14, 165, 233, 0.2);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #08090c;
+          --surface: #12141b;
+          --text: #f3f4f8;
+          --text-2: #a8aebe;
+          --text-3: #7c8396;
+          --border: #242835;
+          --accent: #7c83ff;
+          --accent-contrast: #0b0d14;
+          --warn: #fbbf24;
+          --warn-soft: rgba(251, 191, 36, 0.16);
+          --aurora-1: rgba(99, 102, 241, 0.22);
+          --aurora-2: rgba(168, 85, 247, 0.16);
+          --aurora-3: rgba(14, 165, 233, 0.14);
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        background:
+          radial-gradient(58rem 38rem at 12% -12%, var(--aurora-1), transparent 62%),
+          radial-gradient(48rem 32rem at 108% -4%, var(--aurora-2), transparent 58%),
+          radial-gradient(44rem 30rem at 50% 118%, var(--aurora-3), transparent 62%),
+          var(--bg);
+        color: var(--text);
+        font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+          Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
+      }
+
+      /* Wordmark only - the logo's checkmark would read as success here. */
+      .topbar {
+        padding: 1.5rem 1.25rem;
+        font-size: 1.0625rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-self: start;
+        padding: 0 1.25rem 4rem;
+        text-align: center;
+      }
+
+      .badge {
+        display: grid;
+        place-items: center;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 999px;
+        background: var(--warn-soft);
+        color: var(--warn);
+        box-shadow: 0 0 0 9px color-mix(in srgb, var(--warn) 9%, transparent);
+      }
+
+      .code {
+        margin: 2rem 0 0;
+        font-size: clamp(4.5rem, 18vw, 7rem);
+        font-weight: 800;
+        line-height: 0.85;
+        letter-spacing: -0.06em;
+        background: linear-gradient(120deg, var(--warn), #f43f5e 92%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      h1 {
+        margin: 1.5rem 0 0.75rem;
+        font-size: 1.875rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      .body {
+        max-width: 30rem;
+        margin: 0;
+        color: var(--text-2);
+        font-size: 1.0625rem;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+      }
+
+      a.btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: 2.75rem;
+        padding: 0 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        color: var(--text-2);
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 120ms ease, border-color 120ms ease, background-color 120ms ease;
+      }
+
+      a.btn:hover {
+        transform: translateY(-1px);
+        border-color: var(--text-3);
+      }
+
+      a.btn--primary {
+        border-color: transparent;
+        background: var(--accent);
+        color: var(--accent-contrast);
+      }
+
+      a.btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .hint {
+        max-width: 26rem;
+        margin: 1.75rem 0 0;
+        font-size: 0.875rem;
+        color: var(--text-3);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        a.btn {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">TodoHub</div>
+
+    <main>
+      <span class="badge" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+          <path d="M12 9v4M12 17h.01" />
+        </svg>
+      </span>
+
+      <p class="code" aria-hidden="true">404</p>
+
+      <h1>Page not found</h1>
+
+      <p class="body">
+        The link you followed is broken, or the address was mistyped. Nothing was lost - your tasks
+        are stored in this browser, not on a server.
+      </p>
+
+      <div class="actions">
+        <a class="btn btn--primary" href="/">Back to your list</a>
+        <a class="btn" href="/about">About TodoHub</a>
+      </div>
+
+      <p class="hint">Receiving a shared list? Scan its QR code from your list.</p>
+    </main>
+  </body>
+</html>
