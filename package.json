@@ -2,26 +2,29 @@
   "name": "todohub",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@yudiel/react-qr-scanner": "^2.0.8",
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
-    "eslint": "8.48.0",
-    "eslint-config-next": "13.4.19",
-    "next": "13.4.19",
     "qrcode.react": "^4.0.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-hot-toast": "^2.4.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
-    "@types/node": "20.14.2",
-    "@types/react": "18.3.3"
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
   }
 }

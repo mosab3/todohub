@@ -1,23 +1,28 @@
 # TodoHub
 
-TodoHub is a privacy-focused task management application built with **Next.js** and **TypeScript**. It features a clean, responsive interface for managing your to-dos, with no server-side storage, your data stays in your browser.
+TodoHub is a privacy-focused task management application built with **React** and **Vite**. It features a clean, responsive interface for managing your to-dos, with no server-side storage, your data stays in your browser.
 
 ## Features
 - **Task Management:** Add, edit, and delete tasks.
 - **Privacy-Focused:** No data is stored on any server. All tasks are saved locally using browser storage.
 - **Completion Status:** Mark tasks as complete or incomplete.
+- **Share over QR:** Export/import a list between devices with a QR code.
+- **Dark Mode:** Toggle a persisted light/dark theme.
 - **Responsive Design:** Optimized for both desktop and mobile devices.
 
 ## Technologies Used
-- **Next.js**: Framework for server-side rendering and React.
+- **React**: UI library.
+- **Vite**: Build tool and dev server.
 - **TypeScript**: Static typing for JavaScript.
+- **React Router**: Client-side routing for `/` and `/about`.
+- **Bootstrap 5**: Styling and components.
 - **Local Storage**: Data persistence in the browser.
 
 ## Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v14.x or higher)
-- [npm](https://npmjs.com) or [Yarn](https://yarnpkg.com/)
+- [Node.js](https://nodejs.org/) (v18.x or higher)
+- [npm](https://npmjs.com)
 
 ### Installation
 Clone the repository:
@@ -27,12 +32,16 @@ cd todohub
 npm install
 ```
 
+### Environment
+The AdSense publisher id lives in an env file (optional):
+```bash
+echo "VITE_ADSENSE_PUB=your_pub_id" > .env.local
+```
+
 ### Running the Application
 To start the development server, run:
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 The app will be available at `http://localhost:3000`.
 
@@ -41,26 +50,28 @@ To build the project for production:
 ```bash
 npm run build
 ```
-This will generate an optimized build in the `.next` directory.
-
-### Linting and Formatting
-- Run ESLint:
+This type-checks the project and generates an optimized build in the `dist` directory. Preview it with:
 ```bash
-npm run lint
+npm run preview
 ```
-- Format code with Prettier:
+
+### Type Checking
 ```bash
-npm run format
+npm run typecheck
 ```
 
 ## Folder Structure
 ```bash
 .
-├── components      # Reusable UI components
-├── pages           # Next.js pages and routes
-├── public          # Static assets
-├── styles          # Global and modular CSS
-# └── utils           # Utility functions
+├── index.html        # Vite entry HTML
+├── src
+│   ├── main.tsx      # App bootstrap (styles + router)
+│   ├── App.tsx       # Route definitions
+│   ├── components    # Reusable UI components
+│   ├── pages         # Route views
+│   └── styles        # Global CSS
+├── public            # Static assets
+└── vite.config.ts
 ```
 
 ## Contributing
