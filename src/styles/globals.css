@@ -324,7 +324,7 @@ svg {
   color: var(--text);
 }
 
-.nav__link[aria-current='page']::after {
+.nav__link::after {
   content: '';
   position: absolute;
   inset-inline: var(--sp-3);
@@ -332,6 +332,13 @@ svg {
   height: 2px;
   border-radius: var(--r-full);
   background: var(--accent);
+  transform: scaleX(0);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.nav__link:hover::after,
+.nav__link[aria-current='page']::after {
+  transform: scaleX(1);
 }
 
 /* Footer ------------------------------------------------------------------ */
@@ -458,7 +465,12 @@ svg {
     var(--accent) calc(var(--pct) * 1%),
     var(--surface-3) 0
   );
-  transition: background var(--dur-3) var(--ease);
+  /* `--pct` is registered via @property, so the sweep itself interpolates. */
+  transition: --pct 700ms var(--ease-out), box-shadow var(--dur-2) var(--ease);
+}
+
+.progress__ring[data-complete='true'] {
+  animation: ring-glow 2.4s var(--ease) infinite;
 }
 
 .progress__ring::after {
@@ -546,6 +558,10 @@ svg {
   white-space: nowrap;
   transition: transform var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease),
     border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .btn:active {
@@ -710,6 +726,7 @@ svg {
 }
 
 .task {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: var(--sp-3);
@@ -719,7 +736,11 @@ svg {
   background: var(--surface);
   transition: border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease),
     transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease);
-  animation: task-in var(--dur-3) var(--ease-out) both;
+  /*
+    `backwards`, not `both`: a filling animation keeps applying its final
+    keyframe, which would override the hover transform below it in the cascade.
+  */
+  animation: task-in var(--dur-3) var(--ease-out) backwards;
   animation-delay: calc(var(--i, 0) * 35ms);
 }
 
@@ -745,14 +766,29 @@ svg {
   min-width: 0;
   padding-block: 0.35rem;
   overflow-wrap: anywhere;
-  transition: color var(--dur-2) var(--ease);
 }
 
-.task[data-done='true'] .task__text {
+/*
+  The strikethrough is a background gradient on an inline label rather than
+  text-decoration, because text-decoration cannot be animated. The line draws
+  across as the task completes. Being inline keeps it trimmed to the text
+  instead of spanning the whole flex row.
+*/
+.task__label {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left 60%;
+  background-size: 0% 1.5px;
+  transition: background-size var(--dur-3) var(--ease-out), color var(--dur-2) var(--ease);
+}
+
+.task__label:dir(rtl) {
+  background-position: right 60%;
+}
+
+.task[data-done='true'] .task__label {
+  background-size: 100% 1.5px;
   color: var(--text-3);
-  text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-  text-decoration-color: var(--border-strong);
 }
 
 .task__input {
@@ -785,7 +821,8 @@ svg {
 
 /* Touch devices have no hover - keep actions permanently visible. */
 @media (hover: none) {
-  .task__actions {
+  .task__actions,
+  .subtask__actions {
     opacity: 1;
   }
 }
@@ -1262,4 +1299,330 @@ svg {
   .task__actions {
     opacity: 1;
   }
+}
+
+/* ==========================================================================
+   SUB-LISTS
+   ========================================================================== */
+
+.task__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.task__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.subtasks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-block-start: var(--sp-2);
+  margin-inline-start: 0.15rem;
+  padding-inline-start: var(--sp-4);
+  border-inline-start: 2px solid var(--border);
+}
+
+.subtask {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+  animation: subtask-in var(--dur-2) var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 30ms);
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.subtask:hover {
+  background: var(--surface-2);
+}
+
+.subtask__text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+
+.subtask__label {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left 60%;
+  background-size: 0% 1.5px;
+  transition: background-size var(--dur-3) var(--ease-out), color var(--dur-2) var(--ease);
+}
+
+.subtask__label:dir(rtl) {
+  background-position: right 60%;
+}
+
+.subtask[data-done='true'] .subtask__label {
+  background-size: 100% 1.5px;
+  color: var(--text-3);
+}
+
+.subtask__actions {
+  display: flex;
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+}
+
+.subtask:hover .subtask__actions,
+.subtask:focus-within .subtask__actions {
+  opacity: 1;
+}
+
+.check--sm,
+.check--sm input,
+.check--sm .check__box {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.check--sm {
+  margin-block-start: 0;
+}
+
+.check--sm .check__box {
+  border-radius: 6px;
+}
+
+.icon-btn--sm {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.pill--sm {
+  min-width: 2rem;
+  height: 1.25rem;
+  font-size: 0.6875rem;
+}
+
+.pill[data-complete='true'] {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.subtask-composer {
+  margin-block-start: var(--sp-2);
+  animation: subtask-in var(--dur-2) var(--ease-out) both;
+}
+
+.subtask-composer input {
+  width: 100%;
+  padding: 0.45rem var(--sp-3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: var(--fs-sm);
+  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+}
+
+.subtask-composer input:focus {
+  outline: none;
+  border-style: solid;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ==========================================================================
+   MOTION
+   ========================================================================== */
+
+/* Registered so the progress ring's sweep can be interpolated by a transition. */
+@property --pct {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/* Entrance choreography: hero first, then the cards beneath it. */
+.hero__eyebrow,
+.hero__title,
+.hero__lede,
+.progress,
+.composer {
+  animation: rise-in 620ms var(--ease-out) backwards;
+}
+
+.hero__eyebrow {
+  animation-delay: 40ms;
+}
+
+.hero__title {
+  animation-delay: 110ms;
+}
+
+.hero__lede {
+  animation-delay: 180ms;
+}
+
+.progress {
+  animation-delay: 250ms;
+}
+
+.composer {
+  animation-delay: 310ms;
+}
+
+.choice__card {
+  animation: rise-in 420ms var(--ease-out) backwards;
+}
+
+.choice__card:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.theme-icon {
+  display: grid;
+  place-items: center;
+  animation: icon-swap 380ms var(--ease-out);
+}
+
+/* Task exit, played before React removes the row. */
+.task[data-removing='true'] {
+  pointer-events: none;
+  animation: task-out var(--dur-2) var(--ease) forwards;
+}
+
+/*
+  Completion flash. Lives on a pseudo-element so it never clobbers the row's
+  entrance animation - the `animation` shorthand would override it.
+*/
+.task::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--success-soft);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.task[data-done='true']::after {
+  animation: done-flash var(--dur-3) var(--ease-out);
+}
+
+.empty__art {
+  animation: float 6s var(--ease) infinite;
+}
+
+.shared__row {
+  animation: subtask-in var(--dur-2) var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+.badge--steps {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+/* Scroll reveal, driven by useReveal(). */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 560ms var(--ease-out), transform 560ms var(--ease-out);
+  transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+}
+
+.reveal[data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes subtask-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes task-out {
+  to {
+    opacity: 0;
+    transform: translateX(-14px) scale(0.97);
+  }
+}
+
+@keyframes done-flash {
+  0% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes ring-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--success-soft);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--success-soft);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes icon-swap {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   NOTICES
+   ========================================================================== */
+
+.notice {
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.notice--warn {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+  background: var(--danger-soft);
+}
+
+.notice strong {
+  display: block;
+  margin-block-end: var(--sp-1);
+  color: var(--text);
 }

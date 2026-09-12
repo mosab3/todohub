@@ -53,7 +53,10 @@ function Header() {
             onClick={toggleTheme}
             aria-pressed={isDark}
           >
-            {isDark ? <SunIcon /> : <MoonIcon />}
+            {/* keyed so the icon replays its entrance animation on each swap */}
+            <span className="theme-icon" key={theme}>
+              {isDark ? <SunIcon /> : <MoonIcon />}
+            </span>
           </IconButton>
         </nav>
       </div>

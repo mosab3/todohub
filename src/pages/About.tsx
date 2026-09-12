@@ -1,7 +1,11 @@
+import { type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeftIcon } from '@/components/icons'
+import { useReveal } from '@/hooks/useReveal'
 
 export default function About() {
+  useReveal()
+
   return (
     <>
       <section className="hero">
@@ -18,7 +22,10 @@ export default function About() {
         </p>
       </section>
 
-      <div className="card card--pad about-block">
+      <div
+        className="card card--pad about-block reveal"
+        style={{ '--reveal-delay': 60 } as CSSProperties}
+      >
         <div className="prose">
           <h2 className="card__title">Why it exists</h2>
           <p>
@@ -27,13 +34,14 @@ export default function About() {
             without a connection, and never leaves the device unless you explicitly share it.
           </p>
           <p>
-            Moving a list to another device is deliberately low-tech: a QR code carries the tasks
-            across, so there is no account to create and no cloud to trust.
+            Big tasks can hold their own sub-list of steps, so a vague intention becomes a short,
+            obvious sequence. Move a whole list to another device with a QR code - no account to
+            create, no cloud to trust.
           </p>
         </div>
       </div>
 
-      <div className="card card--pad">
+      <div className="card card--pad reveal" style={{ '--reveal-delay': 140 } as CSSProperties}>
         <h2 className="card__title">Under the hood</h2>
         <div className="dl">
           <div className="dl__row">
@@ -57,6 +65,7 @@ export default function About() {
         <div className="taglist about-tags">
           <span className="tag">No account</span>
           <span className="tag">Offline-first</span>
+          <span className="tag">Sub-lists</span>
           <span className="tag">Dark mode</span>
           <span className="tag">RTL ready</span>
           <span className="tag">Keyboard friendly</span>
