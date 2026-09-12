@@ -1,4 +1,11 @@
-import { useEffect, useRef, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 import { Toaster } from 'react-hot-toast'
 import { CloseIcon, EmptyArt } from './icons'
 
@@ -44,9 +51,7 @@ interface ModalProps {
 
 /**
  * Built on the native <dialog> element, which gives us focus trapping, inert
- * background content, Escape handling and correct stacking for free - all
- * things the previous Bootstrap modal got wrong (its close ref was never
- * attached to the button, so "Add" left the dialog open).
+ * background content, Escape handling and correct stacking for free.
  */
 export function Modal({ open, onClose, title, children, footer }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -100,15 +105,57 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
 
 /* Progress ---------------------------------------------------------------- */
 
+/** Eases a number toward its target so the readout counts instead of jumping. */
+function useCountUp(target: number, duration = 650): number {
+  const [value, setValue] = useState(0)
+  const currentRef = useRef(0)
+
+  useEffect(() => {
+    const from = currentRef.current
+    if (from === target) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      currentRef.current = target
+      setValue(target)
+      return
+    }
+
+    let frame = 0
+    const start = performance.now()
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration)
+      const eased = 1 - (1 - progress) ** 3
+      const next = Math.round(from + (target - from) * eased)
+      currentRef.current = next
+      setValue(next)
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [target, duration])
+
+  return value
+}
+
 export function Progress({ done, total }: { done: number; total: number }) {
   const pct = total === 0 ? 0 : Math.round((done / total) * 100)
+  const displayed = useCountUp(pct)
+  // Starts at 0 so the ring sweeps up to its value on first paint.
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(frame)
+  }, [])
+
+  const complete = total > 0 && done === total
 
   let label = 'Nothing on the list yet'
   let sub = 'Add your first task to get going.'
 
   if (total > 0) {
     label = `${done} of ${total} done`
-    if (done === total) {
+    if (complete) {
       sub = 'Everything is done. Enjoy the quiet.'
     } else if (done === 0) {
       sub = 'All clear ahead.'
@@ -121,11 +168,12 @@ export function Progress({ done, total }: { done: number; total: number }) {
     <div className="card progress">
       <div
         className="progress__ring"
-        style={{ '--pct': pct } as CSSProperties}
+        style={{ '--pct': mounted ? pct : 0 } as CSSProperties}
+        data-complete={complete}
         role="img"
-        aria-label={`${pct}% complete`}
+        aria-label={`${pct}% of tasks complete`}
       >
-        <span className="progress__pct">{pct}%</span>
+        <span className="progress__pct">{displayed}%</span>
       </div>
       <div className="progress__meta">
         <div className="progress__label">{label}</div>

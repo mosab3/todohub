@@ -3,15 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon/icon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Absolute-URL tag: dropped at build time when the site URL is unknown. -->
+    <link rel="canonical" href="%SITE_URL%/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f7f8fb" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#08090c" media="(prefers-color-scheme: dark)" />
+
+    <title>TodoHub - a local-first todo list with sub-lists</title>
     <meta
       name="description"
-      content="TodoHub - a fast, local-first todo list. No account, no sync, no noise. Move your list between devices with a QR code."
+      content="A fast, private todo list where every task can carry its own steps. No account, no server - nothing leaves your device. Move your list between devices with a QR code."
     />
-    <title>TodoHub</title>
+
+    <!-- Link previews (Open Graph) ------------------------------------------ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TodoHub" />
+    <meta property="og:title" content="TodoHub - out of your head, onto the list" />
+    <meta
+      property="og:description"
+      content="A local-first todo list where every task can carry its own steps. No account, no server, nothing leaves your device."
+    />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="TodoHub - a todo list with nested steps under each task" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Link previews (Twitter/X) ------------------------------------------ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TodoHub - out of your head, onto the list" />
+    <meta
+      name="twitter:description"
+      content="A local-first todo list where every task can carry its own steps. No account, no server, nothing leaves your device."
+    />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
+    <meta name="twitter:image:alt" content="TodoHub - a todo list with nested steps under each task" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

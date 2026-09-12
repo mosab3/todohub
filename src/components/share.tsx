@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Scanner } from '@yudiel/react-qr-scanner'
 import { QRCodeCanvas } from 'qrcode.react'
 import toast from 'react-hot-toast'
@@ -7,6 +7,13 @@ import { normalizeTodos, type Todo } from './todos'
 import { Button, Modal } from './ui'
 
 type Mode = 'choose' | 'send' | 'receive'
+
+/**
+ * A QR symbol tops out at 2953 bytes at error-correction level L. Sub-lists
+ * inflate the payload quickly, so the send view refuses to render a code that
+ * would be unreadable instead of showing a QR that silently never scans.
+ */
+const QR_BYTE_LIMIT = 2900
 
 interface ShareModalProps {
   open: boolean
@@ -18,8 +25,8 @@ interface ShareModalProps {
 /**
  * Moves a list between devices with a QR code.
  *
- * Only `text` and `checked` travel in the payload: a QR symbol has limited
- * capacity, and internal ids would bloat it for no benefit since the receiver
+ * Only `text`, `checked` and nested `subtasks` travel in the payload: internal
+ * ids would bloat a capacity-limited symbol for no benefit, since the receiver
  * normalizes whatever it reads.
  */
 export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) {
@@ -37,9 +44,22 @@ export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) 
     }
   }, [open])
 
-  const payload = JSON.stringify(todos.map(({ text, checked }) => ({ text, checked })))
+  const payload = JSON.stringify(
+    todos.map(({ text, checked, subtasks }) => ({
+      text,
+      checked,
+      subtasks: subtasks.map(({ text: subText, checked: subChecked }) => ({
+        text: subText,
+        checked: subChecked,
+      })),
+    })),
+  )
+  const payloadBytes = new TextEncoder().encode(payload).length
+  const tooBig = payloadBytes > QR_BYTE_LIMIT
+
   const newOnes = scanned.filter((item) => !todos.some((existing) => existing.text === item.text))
   const duplicates = scanned.length - newOnes.length
+  const stepTotal = todos.reduce((sum, todo) => sum + todo.subtasks.length, 0)
 
   const rejectCode = () => {
     const now = Date.now()
@@ -113,7 +133,9 @@ export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) 
               <span className="choice__title">Send this list</span>
               <span className="choice__desc">
                 {todos.length > 0
-                  ? `Show a QR code containing all ${todos.length} tasks.`
+                  ? `Show a QR code containing ${todos.length} ${todos.length === 1 ? 'task' : 'tasks'}${
+                      stepTotal > 0 ? ` and ${stepTotal} steps` : ''
+                    }.`
                   : 'Your list is empty - add a task first.'}
               </span>
             </span>
@@ -133,9 +155,20 @@ export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) 
 
       {mode === 'send' ? (
         <div className="qr">
-          <div className="qr__frame">
-            <QRCodeCanvas value={payload} size={216} level="L" marginSize={1} />
-          </div>
+          {tooBig ? (
+            <div className="notice notice--warn">
+              <strong>This list is too large for one QR code.</strong>
+              <p>
+                The payload is {payloadBytes} bytes and a QR symbol carries roughly {QR_BYTE_LIMIT} at
+                this error-correction level. Complete or delete a few tasks, or share in smaller
+                batches.
+              </p>
+            </div>
+          ) : (
+            <div className="qr__frame">
+              <QRCodeCanvas value={payload} size={216} level="L" marginSize={1} />
+            </div>
+          )}
           <p className="modal__note">
             Open TodoHub on the other device and choose Receive a list.
           </p>
@@ -165,8 +198,8 @@ export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) 
             />
           </div>
           <p className="scanner__hint">
-            Point the camera at the sender's QR code. Camera access is required, and this
-            page must be served over HTTPS.
+            Point the camera at the sender&apos;s QR code. Camera access is required, and this page
+            must be served over HTTPS.
           </p>
           <div className="row" style={{ justifyContent: 'center', marginTop: '1rem' }}>
             <Button variant="ghost" onClick={() => setMode('choose')}>
@@ -179,14 +212,21 @@ export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) 
       {mode === 'receive' && scanned.length > 0 ? (
         <div className="stack" style={{ gap: '1rem' }}>
           <div className="shared">
-            {scanned.map((todo) => {
+            {scanned.map((todo, index) => {
               const isDuplicate = todos.some((existing) => existing.text === todo.text)
               return (
-                <div className="shared__row" key={todo.id}>
+                <div
+                  className="shared__row"
+                  key={todo.id}
+                  style={{ '--i': index } as CSSProperties}
+                >
                   <InboxIcon size={16} />
                   <span className="shared__text" dir="auto">
                     {todo.text}
                   </span>
+                  {todo.subtasks.length > 0 ? (
+                    <span className="badge badge--steps">{todo.subtasks.length} steps</span>
+                  ) : null}
                   <span className={`badge ${isDuplicate ? 'badge--dup' : 'badge--new'}`}>
                     {isDuplicate ? 'Already added' : 'New'}
                   </span>
@@ -195,9 +235,7 @@ export function ShareModal({ open, onClose, todos, onImport }: ShareModalProps) 
             })}
           </div>
           {newOnes.length === 0 ? (
-            <p className="modal__note">
-              Everything in this code is already on your list.
-            </p>
+            <p className="modal__note">Everything in this code is already on your list.</p>
           ) : null}
         </div>
       ) : null}

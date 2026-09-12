@@ -1,18 +1,24 @@
 /**
  * Todo model and localStorage persistence.
  *
- * Tasks carry a stable `id` so list operations never depend on array indexes.
- * `normalizeTodos` also migrates the pre-id format (and anything shared over QR
- * from an older build) into the current shape.
+ * Tasks carry a stable `id` so list operations never depend on array indexes,
+ * and each task owns a one-level sub-list of steps.
  */
 
-export interface Todo {
+export interface Subtask {
   id: string
   text: string
   checked: boolean
 }
 
-const STORAGE_KEY = 'list'
+export interface Todo {
+  id: string
+  text: string
+  checked: boolean
+  subtasks: Subtask[]
+}
+
+const STORAGE_KEY = '***'
 
 export function createId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -21,7 +27,35 @@ export function createId(): string {
   return `t_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
 }
 
-/** Coerce unknown input (storage or a scanned QR payload) into valid todos. */
+/** Coerce unknown sub-list input (storage or a scanned QR payload) into steps. */
+function normalizeSubtasks(input: unknown): Subtask[] {
+  if (!Array.isArray(input)) return []
+
+  const seen = new Set<string>()
+  const subtasks: Subtask[] = []
+
+  for (const entry of input) {
+    if (!entry || typeof entry !== 'object') continue
+
+    const candidate = entry as Partial<Subtask>
+    const text = typeof candidate.text === 'string' ? candidate.text.trim() : ''
+    if (!text || seen.has(text)) continue
+    seen.add(text)
+
+    subtasks.push({
+      id: typeof candidate.id === 'string' && candidate.id ? candidate.id : createId(),
+      text,
+      checked: candidate.checked === true,
+    })
+  }
+
+  return subtasks
+}
+
+/**
+ * Coerce unknown input into valid todos, migrating the pre-id and pre-subtask
+ * formats (including anything shared over QR from an older build).
+ */
 export function normalizeTodos(input: unknown): Todo[] {
   if (!Array.isArray(input)) return []
 
@@ -42,10 +76,19 @@ export function normalizeTodos(input: unknown): Todo[] {
       id: typeof candidate.id === 'string' && candidate.id ? candidate.id : createId(),
       text,
       checked: candidate.checked === true,
+      subtasks: normalizeSubtasks(candidate.subtasks),
     })
   }
 
   return todos
+}
+
+/** `2/5` progress for a task's sub-list. */
+export function subtaskProgress(todo: Todo): { done: number; total: number } {
+  return {
+    total: todo.subtasks.length,
+    done: todo.subtasks.filter((subtask) => subtask.checked).length,
+  }
 }
 
 export function loadTodos(): Todo[] {
