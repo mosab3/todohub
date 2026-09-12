@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { BrandMark, MoonIcon, SunIcon } from './icons'
+import { ShareLinks } from './share-links'
 import { useTheme } from './theme'
 import { IconButton } from './ui'
 
@@ -68,14 +69,18 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        <span>TodoHub</span>
-        <span aria-hidden="true">&middot;</span>
-        <span>Your list never leaves this device</span>
-        <span className="spacer" />
-        <span className="row">
-          <span>Add with</span>
-          <kbd className="kbd">Enter</kbd>
-        </span>
+        <div className="footer__row">
+          <span>TodoHub</span>
+          <span aria-hidden="true">&middot;</span>
+          <span>Your list never leaves this device</span>
+          <span className="spacer" />
+          <span className="row">
+            <span>Add with</span>
+            <kbd className="kbd">Enter</kbd>
+          </span>
+        </div>
+
+        <ShareLinks />
       </div>
     </footer>
   )

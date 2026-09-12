@@ -68,6 +68,8 @@
   --success-soft: rgba(4, 120, 87, 0.1);
   --danger: #dc2626;
   --danger-soft: rgba(220, 38, 38, 0.1);
+  --warn: #d97706;
+  --warn-soft: rgba(217, 119, 6, 0.12);
   --aurora-1: rgba(99, 102, 241, 0.28);
   --aurora-2: rgba(168, 85, 247, 0.22);
   --aurora-3: rgba(14, 165, 233, 0.2);
@@ -97,6 +99,8 @@
   --success-soft: rgba(52, 211, 153, 0.14);
   --danger: #f87171;
   --danger-soft: rgba(248, 113, 113, 0.14);
+  --warn: #fbbf24;
+  --warn-soft: rgba(251, 191, 36, 0.16);
   --aurora-1: rgba(99, 102, 241, 0.22);
   --aurora-2: rgba(168, 85, 247, 0.16);
   --aurora-3: rgba(14, 165, 233, 0.14);
@@ -1295,6 +1299,17 @@ svg {
     display: none;
   }
 
+  /* Share buttons collapse to icon-only squares in the footer. */
+  .share__btn {
+    width: 2.5rem;
+    padding-inline: 0;
+    justify-content: center;
+  }
+
+  .share__btn-label {
+    display: none;
+  }
+
   /* Actions stay reachable on small screens without a hover state. */
   .task__actions {
     opacity: 1;
@@ -1625,4 +1640,144 @@ svg {
   display: block;
   margin-block-end: var(--sp-1);
   color: var(--text);
+}
+
+/* ==========================================================================
+   FOOTER + SHARE
+   ========================================================================== */
+
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+}
+
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.share__label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.share__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.share__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 2.5rem;
+  padding-inline: var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease),
+    background-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease-out);
+}
+
+.share__btn:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+.share__btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.share__btn-label {
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   ERROR STATE (404)
+   ========================================================================== */
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: var(--sp-8) var(--sp-12);
+  text-align: center;
+  animation: rise-in 620ms var(--ease-out) backwards;
+}
+
+/*
+  A warning glyph, never the brand checkmark: a tick on an error page reads as
+  success and undercuts the message. The amber halo is the chromatic cue that
+  something went wrong.
+*/
+.error__badge {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--r-full);
+  background: var(--warn-soft);
+  color: var(--warn);
+  box-shadow: 0 0 0 9px color-mix(in srgb, var(--warn) 9%, transparent);
+}
+
+/* The status code is the largest element on the page, so the state is
+   unmistakable even at a glance. */
+.error__code {
+  margin-block-start: var(--sp-6);
+  font-size: clamp(4.5rem, 18vw, 7rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  background: linear-gradient(120deg, var(--warn), #f43f5e 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.error__title {
+  margin-block: var(--sp-5) var(--sp-3);
+  font-size: var(--fs-2xl);
+  letter-spacing: -0.03em;
+}
+
+.error__body {
+  max-width: 30rem;
+  color: var(--text-2);
+}
+
+/* Recovery first; secondary information stays visually quiet. */
+.error__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-block-start: var(--sp-6);
+}
+
+.error__hint {
+  max-width: 26rem;
+  margin-block-start: var(--sp-6);
+  font-size: var(--fs-sm);
+  color: var(--text-3);
 }
