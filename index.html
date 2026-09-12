@@ -1,10 +1,43 @@
 <!doctype html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon/icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Yet Another TODO List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f7f8fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#08090c" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="TodoHub - a fast, local-first todo list. No account, no sync, no noise. Move your list between devices with a QR code."
+    />
+    <title>TodoHub</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap"
+    />
+
+    <!--
+      Applies the stored theme before first paint so dark-mode users never see a
+      white flash. Kept inline and dependency-free on purpose.
+    -->
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('darkMode')
+          var mode =
+            stored ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          document.documentElement.setAttribute('data-theme', mode)
+        } catch (error) {
+          /* localStorage blocked - fall back to the default light theme */
+        }
+      })()
+    </script>
+
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-%VITE_ADSENSE_PUB%"

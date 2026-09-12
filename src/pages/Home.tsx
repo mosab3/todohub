@@ -1,181 +1,198 @@
-import { Container, Card, Navbar, ShareModal, Todo, Wrapper, ToasterComponent } from '@/components/main'
-import { PlusIcon, ShareIcon } from '@/components/icons'
-import { List, Items, TaskType } from '@/components/list'
-import React, { useState, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { PlusIcon, ShareIcon } from '@/components/icons'
+import { TaskItem, TaskSection } from '@/components/list'
+import { ShareModal } from '@/components/share'
+import { createId, loadTodos, saveTodos, type Todo } from '@/components/todos'
+import { AppToaster, Button, EmptyState, Progress } from '@/components/ui'
 
 export default function Home() {
-  const [todo, setTodo] = useState<Todo[]>([])
-  const [message, setMessage] = useState('')
-  const [editMessage, setEditMessage] = useState('')
-  const refMessage = useRef<HTMLInputElement>(null)
-  const refOpenModal = useRef<HTMLButtonElement>(null)
+  const [todos, setTodos] = useState<Todo[]>(loadTodos)
+  const [draft, setDraft] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editDraft, setEditDraft] = useState('')
+  const [shareOpen, setShareOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const localList = localStorage.getItem('list')
-    if (localList) {
-      setTodo(JSON.parse(localList))
-    }
-  }, [])
+    saveTodos(todos)
+  }, [todos])
 
-  const handelEdit = (index: number) => {
-    // Check if there are any active edit
-    let isActiveEdit = todo.some((obj) => {
-      return obj.isEditing === true
-    })
-    if (isActiveEdit) {
-      toast.error('Can not edit more than one task at the same time.')
+  const active = useMemo(() => todos.filter((todo) => !todo.checked), [todos])
+  const completed = useMemo(() => todos.filter((todo) => todo.checked), [todos])
+
+  const addTodo = () => {
+    const text = draft.trim()
+    if (!text) {
+      toast.error('Type a task first.')
       return
     }
-
-    refMessage.current.disabled = true
-    localStorage.setItem('tempMessage', message)
-    setMessage('')
-
-    const updatedTodo: Todo[] = [...todo]
-    updatedTodo[index].isEditing = true
-    setEditMessage(updatedTodo[index].text)
-    setTodo(updatedTodo)
+    if (todos.some((todo) => todo.text === text)) {
+      toast.error('That task is already on your list.')
+      return
+    }
+    setTodos((prev) => [{ id: createId(), text, checked: false }, ...prev])
+    setDraft('')
+    inputRef.current?.focus()
   }
 
-  const handelEnter = (
-    event: React.MouseEvent<HTMLSpanElement> | React.KeyboardEvent<HTMLSpanElement>,
-    isEdit: boolean = false,
-    index: null | number = null,
-  ) => {
-    if (
-      // Check for click
-      event.type === 'click' ||
-      // Check for enter
-      (event.type === 'keydown' && (event as React.KeyboardEvent<HTMLSpanElement>).key === 'Enter')
-    ) {
-      let value: string
-      if (isEdit) {
-        value = editMessage.trim()
-      } else {
-        value = message.trim()
-      }
-      let isObjPresent = todo.some((obj) => {
-        return obj.text === value
-      })
-      if (isObjPresent) {
-        toast.error('This task is already present.')
-      } else if (value == '') {
-        toast.error('Can not submit an empty task.')
-      } else {
-        let updatedTodo: Todo[] = []
-        if (isEdit) {
-          updatedTodo = [...todo]
-          updatedTodo[index].text = value
-          updatedTodo[index].isEditing = false
-        } else {
-          updatedTodo = [{ text: value, checked: false, isEditing: false }, ...todo]
-        }
-        setTodo(updatedTodo)
-        localStorage.setItem('list', JSON.stringify(updatedTodo))
-        let getTempMessage = localStorage.getItem('tempMessage')
-        refMessage.current.disabled = false
-        if (getTempMessage) {
-          setMessage(getTempMessage)
-          localStorage.setItem('tempMessage', '')
-        } else {
-          setMessage('')
-        }
-      }
-    }
+  const toggleTodo = (id: string) => {
+    setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, checked: !todo.checked } : todo)))
   }
 
-  const handelCheck = (event, index: number | null = null) => {
-    if (index) {
-      let beenEditing = [...todo][index]
-      let isBeenEditing = beenEditing.isEditing
-      if (isBeenEditing) {
-        toast.error("Can not complete a task while it's been edited.")
-        return
-      }
+  const startEdit = (todo: Todo) => {
+    if (editingId && editingId !== todo.id) {
+      toast.error('Finish the task you are editing first.')
+      return
     }
-
-    let checked = event.target.checked
-    let value = event.target.value
-    const updatedTodo = (prevTodo: Todo[], checked: boolean, value: string) => {
-      return prevTodo.map((obj) => {
-        if (obj.text === value) {
-          return { ...obj, checked }
-        }
-        return obj
-      })
-    }
-    const reserveTodo = updatedTodo(todo, checked, value)
-    setTodo(reserveTodo)
-    localStorage.setItem('list', JSON.stringify(reserveTodo))
+    setEditingId(todo.id)
+    setEditDraft(todo.text)
   }
 
-  const handelDelete = (text: string) => {
-    const updatedTodo = todo.filter((obj) => {
-      if (obj.text === text && obj.isEditing) {
-        toast.error("Can not delete a task while it's been edit.")
-        return obj
-      }
-      return obj.text !== text
-    })
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditDraft('')
+  }
 
-    setTodo(updatedTodo)
-    localStorage.setItem('list', JSON.stringify(updatedTodo))
+  const commitEdit = (id: string) => {
+    const text = editDraft.trim()
+    if (!text) {
+      toast.error('A task cannot be empty.')
+      return
+    }
+    if (todos.some((todo) => todo.text === text && todo.id !== id)) {
+      toast.error('That task already exists.')
+      return
+    }
+    setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, text } : todo)))
+    cancelEdit()
+  }
+
+  const removeTodo = (id: string) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id))
+    if (editingId === id) cancelEdit()
+  }
+
+  const clearCompleted = () => {
+    setTodos((prev) => prev.filter((todo) => !todo.checked))
+    cancelEdit()
+    toast.success('Completed tasks cleared.')
+  }
+
+  const importTodos = (imported: Todo[]) => {
+    setTodos((prev) => [...prev, ...imported])
+    toast.success(`Added ${imported.length} ${imported.length === 1 ? 'task' : 'tasks'}.`)
   }
 
   return (
     <>
-      <Wrapper>
-        <ToasterComponent />
-        <Navbar />
-        <ShareModal todo={todo} setTodo={setTodo} refOpen={refOpenModal} />
-        <Container>
-          <Card>
-            <List>
-              <div className="mb-3">
-                <div className="input-group flex-nowrap">
-                  <span className="input-group-text">
-                    <div className="hstack gap-2">
-                      <div>
-                        <span onClick={(event) => handelEnter(event)}>
-                          <PlusIcon />
-                        </span>
-                      </div>
-                      <div className="vr"></div>
-                      <div>
-                        <span onClick={() => refOpenModal.current?.click()}>
-                          <ShareIcon />
-                        </span>
-                      </div>
-                    </div>
-                  </span>
-                  <input
-                    value={message}
-                    onChange={(event) => setMessage(event.target.value)}
-                    className="form-control"
-                    placeholder="fix that bug..."
-                    onKeyDown={(event) => handelEnter(event)}
-                    ref={refMessage}
-                    dir="auto"
-                    autoFocus
+      <AppToaster />
+
+      <section className="hero">
+        <span className="hero__eyebrow">
+          <span className="hero__dot" />
+          Local-first &middot; no account needed
+        </span>
+        <h1 className="hero__title">
+          Get it out of your head, <em>onto the list</em>.
+        </h1>
+        <p className="hero__lede">
+          A todo list that lives entirely in this browser. It works offline, uploads nothing, and
+          moves between your devices with a QR code.
+        </p>
+      </section>
+
+      <Progress done={completed.length} total={todos.length} />
+
+      <div className="composer">
+        <Button className="btn--round" onClick={addTodo} aria-label="Add task">
+          <PlusIcon size={20} />
+        </Button>
+        <input
+          ref={inputRef}
+          className="composer__input"
+          value={draft}
+          dir="auto"
+          autoFocus
+          placeholder="What needs doing?"
+          aria-label="New task"
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') addTodo()
+          }}
+        />
+        <Button variant="ghost" onClick={() => setShareOpen(true)}>
+          <ShareIcon size={18} />
+          <span className="composer__label">Share</span>
+        </Button>
+      </div>
+
+      {todos.length === 0 ? (
+        <EmptyState
+          title="Nothing on the list"
+          body="Add your first task above. Everything stays in this browser, so it will still be here when you come back."
+        />
+      ) : (
+        <>
+          <TaskSection title="Active" count={active.length}>
+            {active.length === 0 ? (
+              <p className="section__empty">All clear. Nothing left to do.</p>
+            ) : (
+              <ul className="tasks">
+                {active.map((todo, index) => (
+                  <TaskItem
+                    key={todo.id}
+                    todo={todo}
+                    index={index}
+                    editing={editingId === todo.id}
+                    draft={editDraft}
+                    onDraftChange={setEditDraft}
+                    onToggle={toggleTodo}
+                    onStartEdit={startEdit}
+                    onCommitEdit={commitEdit}
+                    onCancelEdit={cancelEdit}
+                    onDelete={removeTodo}
                   />
-                </div>
+                ))}
+              </ul>
+            )}
+          </TaskSection>
+
+          {completed.length > 0 ? (
+            <TaskSection title="Completed" count={completed.length}>
+              <ul className="tasks">
+                {completed.map((todo, index) => (
+                  <TaskItem
+                    key={todo.id}
+                    todo={todo}
+                    index={index}
+                    editing={false}
+                    draft=""
+                    onDraftChange={setEditDraft}
+                    onToggle={toggleTodo}
+                    onStartEdit={startEdit}
+                    onCommitEdit={commitEdit}
+                    onCancelEdit={cancelEdit}
+                    onDelete={removeTodo}
+                  />
+                ))}
+              </ul>
+              <div className="section__actions">
+                <Button variant="quiet" onClick={clearCompleted}>
+                  Clear completed
+                </Button>
               </div>
-              <Items
-                taskType={TaskType.Uncompleted}
-                todo={todo}
-                handelEdit={handelEdit}
-                handelCheck={handelCheck}
-                handelDelete={handelDelete}
-                handelEnter={handelEnter}
-                editMessage={editMessage}
-                setEditMessage={setEditMessage}
-              />
-              <Items taskType={TaskType.Completed} todo={todo} handelCheck={handelCheck} handelDelete={handelDelete} />
-            </List>
-          </Card>
-        </Container>
-      </Wrapper>
+            </TaskSection>
+          ) : null}
+        </>
+      )}
+
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        todos={todos}
+        onImport={importTodos}
+      />
     </>
   )
 }

@@ -1,100 +1,134 @@
-import { TrashIcon, EditIcon } from './icons'
+import { useRef, type CSSProperties, type ReactNode } from 'react'
+import { CheckIcon, CloseIcon, PencilIcon, TrashIcon } from './icons'
+import { IconButton } from './ui'
+import type { Todo } from './todos'
 
-export enum TaskType {
-  Completed,
-  Uncompleted,
+interface TaskItemProps {
+  todo: Todo
+  /** Position in its section - drives the staggered entrance animation. */
+  index: number
+  editing: boolean
+  draft: string
+  onDraftChange: (value: string) => void
+  onToggle: (id: string) => void
+  onStartEdit: (todo: Todo) => void
+  onCommitEdit: (id: string) => void
+  onCancelEdit: () => void
+  onDelete: (id: string) => void
 }
 
-interface Todo {
-  text: string
-  checked: boolean
-  isEditing: boolean
-}
+export function TaskItem({
+  todo,
+  index,
+  editing,
+  draft,
+  onDraftChange,
+  onToggle,
+  onStartEdit,
+  onCommitEdit,
+  onCancelEdit,
+  onDelete,
+}: TaskItemProps) {
+  // Escape cancels the edit; without this the resulting blur would re-commit it.
+  const skipBlurCommit = useRef(false)
 
-interface ItemProps {
-  taskType: TaskType
-  todo: Todo[]
-  handelEdit?: (index: number) => void
-  handelCheck?: (event: React.ChangeEvent<HTMLInputElement>, index: number | null) => void
-  handelDelete?: (text: string) => void
-  handelEnter?: (event: React.KeyboardEvent<HTMLSpanElement>, isEdit: boolean, index: number | null) => void
-  editMessage?: string
-  setEditMessage?: React.Dispatch<React.SetStateAction<string>>
-}
-
-export function List({ children }) {
   return (
-    <>
-      <div className="list-group">{children}</div>
-    </>
+    <li
+      className="task"
+      data-done={todo.checked}
+      data-editing={editing}
+      style={{ '--i': index } as CSSProperties}
+    >
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={todo.checked}
+          disabled={editing}
+          onChange={() => onToggle(todo.id)}
+          aria-label={`Mark "${todo.text}" as ${todo.checked ? 'not done' : 'done'}`}
+        />
+        <span className="check__box">
+          <CheckIcon size={14} />
+        </span>
+      </label>
+
+      {editing ? (
+        <input
+          className="task__input"
+          value={draft}
+          dir="auto"
+          autoFocus
+          aria-label="Edit task"
+          onChange={(event) => onDraftChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') onCommitEdit(todo.id)
+            if (event.key === 'Escape') {
+              skipBlurCommit.current = true
+              onCancelEdit()
+            }
+          }}
+          onBlur={() => {
+            if (skipBlurCommit.current) {
+              skipBlurCommit.current = false
+              return
+            }
+            onCommitEdit(todo.id)
+          }}
+        />
+      ) : (
+        <span
+          className="task__text"
+          dir="auto"
+          onDoubleClick={() => {
+            if (!todo.checked) onStartEdit(todo)
+          }}
+        >
+          {todo.text}
+        </span>
+      )}
+
+      <div className="task__actions">
+        {editing ? (
+          <>
+            <IconButton label="Save changes" onClick={() => onCommitEdit(todo.id)}>
+              <CheckIcon size={18} />
+            </IconButton>
+            <IconButton label="Cancel editing" onClick={onCancelEdit}>
+              <CloseIcon size={18} />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            {todo.checked ? null : (
+              <IconButton label={`Edit "${todo.text}"`} onClick={() => onStartEdit(todo)}>
+                <PencilIcon size={18} />
+              </IconButton>
+            )}
+            <IconButton label={`Delete "${todo.text}"`} danger onClick={() => onDelete(todo.id)}>
+              <TrashIcon size={18} />
+            </IconButton>
+          </>
+        )}
+      </div>
+    </li>
   )
 }
 
-export function Items({
-  taskType,
-  todo,
-  handelEdit,
-  handelCheck,
-  handelDelete,
-  handelEnter,
-  editMessage,
-  setEditMessage,
-}: ItemProps) {
+interface TaskSectionProps {
+  title: string
+  count: number
+  children: ReactNode
+}
+
+export function TaskSection({ title, count, children }: TaskSectionProps) {
   return (
-    <>
-      <div className={taskType === TaskType.Uncompleted ? 'mb-3' : ''}>
-        {todo
-          .filter((obj) => {
-            if (taskType === TaskType.Completed) {
-              return obj.checked === true
-            } else if (taskType === TaskType.Uncompleted) {
-              return obj.checked === false
-            }
-          })
-          .map((value, index) => (
-            <div
-              className={'input-group mb-1' + (taskType === TaskType.Completed ? ' grayed-out' : '')}
-              key={index}
-            >
-              <span className="input-group-text">
-                <input
-                  type="checkbox"
-                  className="form-check-input mt-0"
-                  key={index}
-                  value={value.text}
-                  onChange={(event) => handelCheck(event, index)}
-                  checked={value.checked}
-                />
-              </span>
-              {value.isEditing && taskType === TaskType.Uncompleted ? (
-                <input
-                  type="text"
-                  value={editMessage}
-                  onChange={(event) => setEditMessage(event.target.value)}
-                  className="form-control"
-                  onKeyDown={(event) => handelEnter(event, true, index)}
-                  dir="auto"
-                  autoFocus
-                />
-              ) : (
-                <div
-                  className={'form-control' + (taskType === TaskType.Completed ? ' bg-secondary-subtle' : '')}
-                  dir="auto"
-                >
-                  {value.text}
-                </div>
-              )}
-              <span className="input-group-text" onClick={() => handelDelete(value.text)}>
-                <TrashIcon />
-              </span>
-              {taskType === TaskType.Completed ? null : (
-                <span className="input-group-text" onClick={() => handelEdit(index)}>
-                  <EditIcon />
-                </span>
-              )}
-            </div>
-          ))}
+    <section className="section" aria-label={title}>
+      <div className="section__head">
+        <h2 className="section__title">{title}</h2>
+        <span className="pill">{count}</span>
+        <span className="section__rule" />
       </div>
-    </>
+      {children}
+    </section>
   )
 }
