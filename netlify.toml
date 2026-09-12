@@ -1,0 +1,26 @@
+# Netlify configuration
+# https://docs.netlify.com/build/configure-builds/file-based-configuration/
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 5 requires Node >= 18.14. Pin it so the build does not drift when
+  # Netlify changes its default runtime.
+  NODE_VERSION = "20"
+
+# SPA fallback. The app uses react-router-dom (BrowserRouter), so routes are
+# resolved on the client. Without this, a direct visit to /about or a reload on
+# any sub-route returns a 404 instead of serving the app shell.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Vite writes content-hashed filenames into /assets, so those never change
+# under a given URL and can be cached indefinitely.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
